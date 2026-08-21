@@ -6,6 +6,9 @@ drawn on your hand in real time. This is your "wow it's real" moment.
 
 import cv2
 import mediapipe as mp
+from mediapipe.tasks.python import vision
+from mediapipe.tasks.python import text
+from mediapipe.tasks.python import audio
 
 mp_hands = mp.solutions.hands
 mp_draw = mp.solutions.drawing_utils
