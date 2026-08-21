@@ -1,4 +1,4 @@
-# Air Whiteboard
+# Airscript
 
 An educational visual-recognition project built by our hackathon team. It lets
 a presenter write and draw in the air while a computer displays their work as
