@@ -360,20 +360,20 @@ def main():
                     stage_color = GREEN if stage == "UP" else ORANGE
                     draw_text(frame, f"STAGE: {stage}", (40, 180), stage_color, 4, 2)
 
-                    #if filtered_elbow_angle is not None:
-                        #draw_text(frame, f"Elbow: {filtered_elbow_angle:.1f}", (25, 225), WHITE, 0.6, 1)
+                    if filtered_elbow_angle is not None:
+                        draw_text(frame, f"Elbow: {filtered_elbow_angle:.1f}", (25, 225), WHITE, 0.6, 1)
 
-                    #if hip_angle is not None:
-                        #hip_color = GREEN if hip_angle >= 160 else RED
-                        #draw_text(frame, f"Hip: {hip_angle:.1f}", (25, 255), hip_color, 0.6, 1)
-                    #else:
-                        #draw_text(frame, "Hip not visible", (25, 255), ORANGE, 0.55, 1)
+                    if hip_angle is not None:
+                        hip_color = GREEN if hip_angle >= 160 else RED
+                        draw_text(frame, f"Hip: {hip_angle:.1f}", (25, 255), hip_color, 0.6, 1)
+                    else:
+                        draw_text(frame, "Hip not visible", (25, 255), ORANGE, 0.55, 1)
 
-                    #if knee_angle is not None:
-                        #knee_color = GREEN if knee_angle >= 160 else ORANGE
-                        #draw_text(frame, f"Knee: {knee_angle:.2f}", (25, 285), knee_color, 0.6, 1)
-                    #else:
-                        #draw_text(frame, "Knee not visible!", (25, 285), ORANGE, 0.55, 1)
+                    if knee_angle is not None:
+                        knee_color = GREEN if knee_angle >= 160 else ORANGE
+                        draw_text(frame, f"Knee: {knee_angle:.2f}", (25, 285), knee_color, 0.6, 1)
+                    else:
+                        draw_text(frame, "Knee not visible!", (25, 285), ORANGE, 0.55, 1)
 
                 # BODY FOUND BUT ARM NOT RELIABLE
                 else:
