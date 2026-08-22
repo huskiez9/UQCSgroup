@@ -21,6 +21,10 @@ UP_CONFIRM_FRAMES = 3
 
 ANGLE_HISTORY_SIZE = 3
 
+BODY_ALIGNMENT_MTN = 170
+HEAD_ALIGNMENT_MTN = 170
+ALIGNMENT_VISIBILITY = 0.30
+
 
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 120)
@@ -44,8 +48,8 @@ pose = mp_pose.Pose(
 
 #Landmark indices for left and right body parts
 BODY = {
-    "left":  {"shoulder": 11, "elbow": 13, "wrist": 15, "hip": 23, "knee": 25, "ankle": 27},
-    "right": {"shoulder": 12, "elbow": 14, "wrist": 16, "hip": 24, "knee": 26, "ankle": 28}
+    "left":  {"shoulder": 11, "elbow": 13, "wrist": 15, "hip": 23, "knee": 25, "ankle": 27, "ear": 7, "heel": 29},
+    "right": {"shoulder": 12, "elbow": 14, "wrist": 16, "hip": 24, "knee": 26, "ankle": 28, "ear": 8, "heel": 30}
 }
 
 
@@ -69,6 +73,29 @@ def calculate_angle(point_a, point_b, point_c):
     dot_product = ba_x * bc_x + ba_y * bc_y #Dot product of vectors BA and BC
     cosine = dot_product / (mag_ba * mag_bc) #Cosine of vectors BA and BC
     return float(np.degrees(np.arccos(cosine))) #Angle in degrees between vectors BA and BC
+
+def check_alignment(frame, landmarks, side):
+    ids = BODY[side]
+    shoulder_raw_coord = landmarks[ids["shoulder"]]
+    hip_raw_coord = landmarks[ids["hip"]]
+    heel_raw_coord = landmarks[ids["heel"]]
+    if (shoulder_raw_coord.visibility < ALIGNMENT_VISIBILITY and  hip_raw_coord.visibility < ALIGNMENT_VISIBILITY and heel_raw_coord.visibility < ALIGNMENT_VISIBILITY):
+        draw_text(frame, "PUSHUP ALIGNMENT NOT VISIBLE", (25, 325), ORANGE, 0.7, 2)
+    #head_angle = calculate_angle(get_point(ear_raw_coord), get_point(shoulder_raw_coord), get_point(hip_raw_coord))
+    body_angle = calculate_angle(get_point(shoulder_raw_coord), get_point(hip_raw_coord), get_point(heel_raw_coord))
+    alignment_correct = (body_angle >= BODY_ALIGNMENT_MTN)
+    height, width = frame.shape[:2]
+    shoulder_pixel_coord = get_pixel(shoulder_raw_coord, width, height)
+    heel_pixel_coord = get_pixel(heel_raw_coord, width, height)
+    if alignment_correct:
+        cv2.line(frame, shoulder_pixel_coord, heel_pixel_coord, GREEN, 6, cv2.LINE_AA)
+        draw_text(frame, "ALIGNMENT CORRECT", (25, 325), GREEN, 0.8, 2)
+    else:
+        draw_text(frame, "ALIGNMENT NOT CORRECT", (25, 325), RED, 0.8, 2)
+    #draw_text(frame, f"Head alignment angle: {head_angle}", (25, 395), WHITE, 0.55, 1)
+    shoulder_x, shoulder_y = shoulder_pixel_coord
+    draw_text(frame,f"{body_angle:.1f}", (shoulder_x - 80, shoulder_y - 10), WHITE, 0.7)
+
 
 
 def get_point(landmark):
@@ -180,6 +207,10 @@ def draw_active_side(frame, landmarks, side):
     cv2.line(frame, points["wrist"], points["elbow"], (0, 255, 255), 5, cv2.LINE_AA)
     cv2.line(frame, points["elbow"], points["shoulder"], (0, 255, 255), 5, cv2.LINE_AA)
 
+    #Check body alignment:
+    alignment_correct = check_alignment(frame, landmarks, side)
+
+
     #CHEST
     chest_point = get_chest(frame,landmarks)
     cv2.circle(frame, chest_point, 7, (255, 255, 255), -1)
@@ -223,7 +254,7 @@ def main():
     down_frames = 0
     up_frames = 0
 
-    if not run_countdown(cap, seconds=10): #Run countdown before starting the pushup tracker
+    if not run_countdown(cap, seconds=5): #Run countdown before starting the pushup tracker
         cap.release()
         cv2.destroyAllWindows()
         return
