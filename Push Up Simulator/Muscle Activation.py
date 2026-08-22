@@ -348,7 +348,6 @@ def main():
 
                         else:
                             up_frames = 0
-
                 else:
                     elbow_history.clear()
 
