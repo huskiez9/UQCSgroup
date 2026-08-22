@@ -376,16 +376,7 @@ def main():
             elapsed_str = get_total_time(start_time)
             draw_text(frame, f"Time: {elapsed_str}", (w - 220, 90), WHITE, 1.2, 2)
 
-
-
-
-
-
-
-
-
-
-            #DISPLAY VALUES. MESS WITH THE SETTINGS TO MAKE AESTHESTICS
+            #DISPLAY VALUES.
             if results.pose_landmarks and arm_visible(landmarks, side):
                 if filtered_elbow_angle is not None:
                     draw_text(frame, f"Elbow: {filtered_elbow_angle:.1f} deg", (25, 225), TORQOISE_BLUE, 1.3, 1)
