@@ -13,6 +13,7 @@ MILESTONE_PHRASES = [
     "Nice work human!",
     "Stay strong!",
     "You've got this!",
+    "You've got this daddy",    
 ]
 
 TARGET_PHRASE = "You reached the target, stand proud, you are strong!"
