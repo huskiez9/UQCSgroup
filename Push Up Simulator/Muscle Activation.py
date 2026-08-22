@@ -221,6 +221,11 @@ def main():
     down_frames = 0
     up_frames = 0
 
+    if not run_countdown(cap, seconds=5): #Run countdown before starting the pushup tracker
+        cap.release()
+        cv2.destroyAllWindows()
+        return
+    
     try:
         while cap.isOpened(): #While camera is opened, read the camera frame and process it
             camera_read_successfully, frame = cap.read() 
