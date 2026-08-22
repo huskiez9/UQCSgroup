@@ -80,25 +80,34 @@ def calculate_angle(point_a, point_b, point_c):
     cosine = dot_product / (mag_ba * mag_bc) #Cosine of vectors BA and BC
     return float(np.degrees(np.arccos(cosine))) #Angle in degrees between vectors BA and BC
 
+
 def check_alignment(frame, landmarks, side):
     ids = BODY[side]
     shoulder_raw_coord = landmarks[ids["shoulder"]]
     hip_raw_coord = landmarks[ids["hip"]]
     heel_raw_coord = landmarks[ids["heel"]]
-    if (shoulder_raw_coord.visibility < ALIGNMENT_VISIBILITY or hip_raw_coord.visibility < ALIGNMENT_VISIBILITY or heel_raw_coord.visibility < ALIGNMENT_VISIBILITY):
-        return False
+    
+   
+    if (shoulder_raw_coord.visibility < ALIGNMENT_VISIBILITY or hip_raw_coord.visibility < ALIGNMENT_VISIBILITY or  heel_raw_coord.visibility < ALIGNMENT_VISIBILITY):
+        draw_text(frame, "ALIGNMENT NOT VISIBLE", (25, 415), ORANGE, 0.8, 2)
+        return False 
     body_angle = calculate_angle(get_point(shoulder_raw_coord), get_point(hip_raw_coord), get_point(heel_raw_coord))
+
     alignment_correct = (body_angle >= BODY_ALIGNMENT_MTN)
     height, width = frame.shape[:2]
+
     shoulder_pixel_coord = get_pixel(shoulder_raw_coord, width, height)
     heel_pixel_coord = get_pixel(heel_raw_coord, width, height)
+    
     if alignment_correct:
         cv2.line(frame, shoulder_pixel_coord, heel_pixel_coord, GREEN, 6, cv2.LINE_AA)
-        draw_text(frame, "ALIGNMENT CORRECT", (25, 325), GREEN, 0.8, 2)
+        draw_text(frame, "ALIGNMENT CORRECT", (25, 415), GREEN, 0.8, 2)
     else:
-        draw_text(frame, "ALIGNMENT NOT CORRECT", (25, 325), RED, 0.8, 2)
+        draw_text(frame, "ALIGNMENT NOT CORRECT", (25, 415), RED, 0.8, 2)
+        
     shoulder_x, shoulder_y = shoulder_pixel_coord
-    draw_text(frame,f"{body_angle:.1f}", (shoulder_x - 80, shoulder_y - 10), WHITE, 0.7)
+    draw_text(frame, f"{body_angle:.1f}", (shoulder_x - 80, shoulder_y - 10), WHITE, 0.7)
+    return alignment_correct
 
 def get_point(landmark):
     return [landmark.x, landmark.y] #Return the x and y coordinates of a LANDMARK AS A LIST
