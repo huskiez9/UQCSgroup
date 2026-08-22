@@ -5,8 +5,9 @@ from collections import deque
 import time
 from pathlib import Path
 
-
+# Different .py files we use to import functions from here
 from countdown import run_countdown
+from audio_beep import play_beep
 
 #Some parameters
 CAM_WIDTH = 1280
@@ -347,9 +348,6 @@ def main():
                                 bottom_reached = False
                                 up_frames = 0
                                 print(f"Push-up completed! Total: {reps}")
-                                if beep_enabled:
-                                    # Play beep sound when a push-up is completed
-                                    play_beep()
                         else:
                             up_frames = 0
 
