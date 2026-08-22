@@ -6,6 +6,7 @@ from collections import deque
 
 # Features from different files
 from countdown import run_countdown
+from audio_beep import play_beep
 
 #Some parameters
 CAM_WIDTH = 1280
@@ -344,6 +345,7 @@ def main():
                                 bottom_reached = False
                                 up_frames = 0
                                 print(f"Push-up completed! Total: {reps}")
+                                play_beep() # Play a beep sound when a push-up is completed
                         else:
                             up_frames = 0
 
