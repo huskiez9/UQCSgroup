@@ -20,7 +20,6 @@ UP_CONFIRM_FRAMES = 3
 ANGLE_HISTORY_SIZE = 3
 
 
-
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 120)
 YELLOW = (0, 255, 255)
@@ -139,6 +138,17 @@ def get_body_angles(landmarks, side):
 
     return (hip_angle, knee_angle)
 
+def get_chest(frame,landmarks):
+    height, width = frame.shape[:2]
+    left_shoulder = get_point(landmarks[12])
+    right_shoulder = get_point(landmarks[11])
+    left_hip = get_point(landmarks[24])
+    right_hip = get_point(landmarks[23])
+
+    chest_x = 0.5*(left_shoulder[0]+right_shoulder[0])+ left_shoulder[0]
+    chest_y = left_shoulder[1]- 0.33*(left_shoulder[1]+left_hip[1]) 
+    chest_coord = (int(chest_x * width), int(chest_y * height))
+    return chest_coord
 
 def draw_text(frame, text, position, color=WHITE, scale=0.7, thickness=2):
     x, y = position
@@ -167,6 +177,10 @@ def draw_active_side(frame, landmarks, side):
     # ARM
     cv2.line(frame, points["wrist"], points["elbow"], (0, 255, 255), 5, cv2.LINE_AA)
     cv2.line(frame, points["elbow"], points["shoulder"], (0, 255, 255), 5, cv2.LINE_AA)
+
+    #CHEST
+    chest_point = get_chest(frame,landmarks)
+    cv2.circle(frame, chest_point, 12, (0, 0, 255), -1)
 
     # TORSO
     if landmarks[landmarks_dict["hip"]].visibility >= BODY_VISIBILITY and landmarks[landmarks_dict["shoulder"]].visibility >= BODY_VISIBILITY:
