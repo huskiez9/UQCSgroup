@@ -3,6 +3,7 @@ import mediapipe as mp
 import numpy as np
 from collections import deque
 import datetime
+import time 
 
 # Different .py files we use to import functions from here
 from countdown import run_countdown
@@ -269,7 +270,11 @@ def main():
         cap.release()
         cv2.destroyAllWindows()
         return
-    
+
+    workout_start_time = time.time() #Total elapsed time of workout 
+
+
+
     try:
         while cap.isOpened(): #While camera is opened, read the camera frame and process it
             camera_read_successfully, frame = cap.read() 
@@ -395,6 +400,13 @@ def main():
             draw_text(frame, f"REPS: {reps}", (25, 145), GREEN, 1.25, 3)
             draw_text(frame, f"LAST SAVED: {saved_reps}", (CAM_WIDTH // 2 - 120, 40), YELLOW, 1.0, 2)
 
+            #Total workout stopwatch 
+            total_seconds = int(time.time() - workout_start_time)
+            minutes = total_seconds // 60 
+            seconds = total_seconds % 60 
+
+            draw_text(frame, f"TIME: {minutes:02d}:{seconds:02d}", (w - 210, 40), WHITE, 0.9, 2)
+
             # DISPLAY
             cv2.imshow("Side Push-Up Tracker", frame)
 
@@ -414,6 +426,7 @@ def main():
                 hip_history.clear()
                 knee_history.clear() 
                 print("[INFO] Counter reset")
+
             elif key == ord("s"):
                 saved_reps = reps
                 timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
