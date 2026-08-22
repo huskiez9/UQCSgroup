@@ -266,6 +266,31 @@ def elbow_flexion_angle(frame, landmarks, side):
                     4,
                     cv2.LINE_AA)
 
+def previous_rep_file():
+    return Path(__file__).with_name("previous_rep.txt")
+
+
+def load_previous_rep():
+    try:
+        with open(previous_rep_file(), "r") as file:
+            return int(file.read().strip())
+    except (FileNotFoundError, ValueError):
+        return 0
+
+
+def save_previous_rep(reps):
+    with open(previous_rep_file(), "w") as file:
+        file.write(str(reps))
+
+
+def is_peace_sign(hand_landmarks):
+    specific_hand_landmarks = hand_landmarks.landmark
+    index_up = specific_hand_landmarks[8].y < specific_hand_landmarks[6].y  #Higher up goes less if you know what I me
+    middle_up = specific_hand_landmarks[12].y < specific_hand_landmarks[10].y
+    ring_down = specific_hand_landmarks[16].y > specific_hand_landmarks[14].y
+    pinky_down = specific_hand_landmarks[20].y > specific_hand_landmarks[18].y
+    return index_up and middle_up and ring_down and pinky_down 
+
     
 def main():
     cap = cv2.VideoCapture(0)   
