@@ -13,14 +13,14 @@ from audio_beep import play_beep
 CAM_WIDTH = 1280
 CAM_HEIGHT = 720
 
-DOWN_ANGLE = 90
+DOWN_ANGLE = 95.5
 UP_ANGLE = 160
 
 ARM_VISIBILITY = 0.30 #Set arm visibility score
 BODY_VISIBILITY = 0.20   
 
-DOWN_CONFIRM_FRAMES = 3
-UP_CONFIRM_FRAMES = 3
+DOWN_CONFIRM_FRAMES = 2
+UP_CONFIRM_FRAMES = 2
 
 ANGLE_HISTORY_SIZE = 3
 PEACE_CONFIRM_FRAMES = 8
@@ -319,7 +319,7 @@ def main():
                         draw_text(frame, f"{filtered_elbow_angle:.1f}", (elbow_x_coord + 20, elbow_y_coord - 15), YELLOW, 0.9, 2) #Display the angle SLIGHTLY ABOVE AND RIGHT OF THE ELBOW JOINT
 
                     # REP LOGIC
-                    if filtered_elbow_angle is not None: #If elbow angle detected, let pushup commence
+                    if filtered_elbow_angle is not None: 
                     
                         if filtered_elbow_angle <= DOWN_ANGLE:
                             down_frames += 1 #I guess 3 frames is enough...
