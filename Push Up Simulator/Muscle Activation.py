@@ -41,7 +41,8 @@ LEG_COLOR = (255, 180, 0)
 
 #Mediapipe setting
 mp_pose = mp.solutions.pose
-mp_draw = mp.solutions.drawing_utilsmp_hands = mp.solutions.hands
+mp_draw = mp.solutions.drawing_utils
+
 
 #Pose setting
 pose = mp_pose.Pose(
