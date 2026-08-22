@@ -36,7 +36,7 @@ ARM_COLOR = (0, 255, 255)
 TORSO_COLOR = (0, 255, 120)
 LEG_COLOR = (255, 180, 0)
 
-# ============================== MEDIAPIPE SETUP ==============================
+#Mediapipe setting
 mp_pose = mp.solutions.pose
 mp_draw = mp.solutions.drawing_utils
 
@@ -81,7 +81,6 @@ def check_alignment(frame, landmarks, side):
     heel_raw_coord = landmarks[ids["heel"]]
     if (shoulder_raw_coord.visibility < ALIGNMENT_VISIBILITY and  hip_raw_coord.visibility < ALIGNMENT_VISIBILITY and heel_raw_coord.visibility < ALIGNMENT_VISIBILITY):
         draw_text(frame, "PUSHUP ALIGNMENT NOT VISIBLE", (25, 325), ORANGE, 0.7, 2)
-    #head_angle = calculate_angle(get_point(ear_raw_coord), get_point(shoulder_raw_coord), get_point(hip_raw_coord))
     body_angle = calculate_angle(get_point(shoulder_raw_coord), get_point(hip_raw_coord), get_point(heel_raw_coord))
     alignment_correct = (body_angle >= BODY_ALIGNMENT_MTN)
     height, width = frame.shape[:2]
@@ -92,11 +91,8 @@ def check_alignment(frame, landmarks, side):
         draw_text(frame, "ALIGNMENT CORRECT", (25, 325), GREEN, 0.8, 2)
     else:
         draw_text(frame, "ALIGNMENT NOT CORRECT", (25, 325), RED, 0.8, 2)
-    #draw_text(frame, f"Head alignment angle: {head_angle}", (25, 395), WHITE, 0.55, 1)
     shoulder_x, shoulder_y = shoulder_pixel_coord
     draw_text(frame,f"{body_angle:.1f}", (shoulder_x - 80, shoulder_y - 10), WHITE, 0.7)
-
-
 
 def get_point(landmark):
     return [landmark.x, landmark.y] #Return the x and y coordinates of a LANDMARK AS A LIST
@@ -347,6 +343,7 @@ def main():
                                 bottom_reached = False
                                 up_frames = 0
                                 print(f"Push-up completed! Total: {reps}")
+                                play_beep() # Play beep sound when a pushup is completed with correct form
                         else:
                             up_frames = 0
 
