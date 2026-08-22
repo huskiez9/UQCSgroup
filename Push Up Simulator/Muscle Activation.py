@@ -345,9 +345,6 @@ def main():
                             up_frames = 0
 
                     # DISPLAY INFORMATION
-                    draw_text(frame, f"REPS: {reps}", (25, 145), GREEN, 1.25, 3)
-                    draw_text(frame, f"LAST SAVED: {saved_reps}", (CAM_WIDTH // 2 - 120, 40), YELLOW, 1.0, 2)
-
                     beep_status_colour = GREEN if beep_enabled else RED
                     draw_text(frame, f"Beep: {'ON' if beep_enabled else 'OFF'} (B to toggle)",
                               (25, 350), beep_status_colour, 0.6, 1)
@@ -381,6 +378,10 @@ def main():
                 knee_history.clear()
                 draw_text(frame, "NO PERSON DETECTED", (25, h - 35), RED, 0.8, 2)
 
+            # Keep the counters visible even when the user's pose/arm is not detected.
+            draw_text(frame, f"REPS: {reps}", (25, 145), GREEN, 1.25, 3)
+            draw_text(frame, f"LAST SAVED: {saved_reps}", (CAM_WIDTH // 2 - 120, 40), YELLOW, 1.0, 2)
+
             # DISPLAY
             cv2.imshow("Side Push-Up Tracker", frame)
 
@@ -390,7 +391,7 @@ def main():
             if key == ord("q"):  # Q = quit
                 break
 
-            elif key == ord("r"):  #Reset counts, rep, stage default up, bottom reach false
+            elif key in (ord("r"), ord("R")):  # R = reset counter and rep-tracking state
                 reps = 0
                 stage = "UP"
                 bottom_reached = False
