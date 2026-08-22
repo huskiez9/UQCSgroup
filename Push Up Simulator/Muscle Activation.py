@@ -257,6 +257,7 @@ def main():
     bottom_reached = False
     down_frames = 0
     up_frames = 0
+    beep_enabled = True  # Have the option to enable/disable the beep sound for user preference
 
     if not run_countdown(cap, seconds=5): #Run countdown before starting the pushup tracker
         cap.release()
@@ -343,12 +344,18 @@ def main():
                                 bottom_reached = False
                                 up_frames = 0
                                 print(f"Push-up completed! Total: {reps}")
-                                play_beep() # Play beep sound when a push-up is completed
+                                if beep_enabled:
+                                    # Play beep sound when a push-up is completed
+                                    play_beep()
                         else:
                             up_frames = 0
 
                     # DISPLAY INFORMATION
                     draw_text(frame, f"REPS: {reps}", (25, 145), GREEN, 1.25, 3)
+
+                    beep_status_colour = GREEN if beep_enabled else RED
+                    draw_text(frame, f"Beep: {'ON' if beep_enabled else 'OFF'} (B to toggle)",
+                              (25, 350), beep_status_colour, 0.6, 1)
 
                     stage_color = GREEN if stage == "UP" else ORANGE
                     draw_text(frame, f"STAGE: {stage}", (25, 185), stage_color, 0.7, 2)
@@ -398,6 +405,11 @@ def main():
                 hip_history.clear()
                 knee_history.clear() 
                 print("[INFO] Counter reset")
+
+            elif key == ord("b"): # B = toggle beep sound on/off
+                beep_enabled = not beep_enabled
+                status = "enabled" if beep_enabled else "disabled"
+                print(f"[INFO] Beep sound is: {status}")
 
     finally:
         cap.release()
