@@ -259,9 +259,7 @@ def main():
     down_frames = 0
     up_frames = 0
     beep_enabled = True  # Have the option to enable/disable the beep sound for user preference
-    previous_rep = load_previous_rep()
-    peace_frames = 0
-    peace_latched = False
+
 
     if not run_countdown(cap, seconds=5): #Run countdown before starting the pushup tracker
         cap.release()
