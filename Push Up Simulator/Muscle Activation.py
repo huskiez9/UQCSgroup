@@ -2,6 +2,7 @@ import cv2
 import mediapipe as mp
 import numpy as np
 from collections import deque
+import datetime
 
 # Different .py files we use to import functions from here
 from countdown import run_countdown
@@ -24,6 +25,7 @@ ANGLE_HISTORY_SIZE = 3
 
 BODY_ALIGNMENT_MTN = 130
 ALIGNMENT_VISIBILITY = 0.30
+
 
 
 WHITE = (255, 255, 255)
@@ -250,6 +252,7 @@ def main():
     bottom_reached = False
     down_frames = 0
     up_frames = 0
+    saved_reps = 0
     beep_enabled = True  # Have the option to enable/disable the beep sound for user preference
 
 
@@ -343,6 +346,7 @@ def main():
 
                     # DISPLAY INFORMATION
                     draw_text(frame, f"REPS: {reps}", (25, 145), GREEN, 1.25, 3)
+                    draw_text(frame, f"LAST SAVED: {saved_reps}", (CAM_WIDTH // 2 - 120, 40), YELLOW, 1.0, 2)
 
                     beep_status_colour = GREEN if beep_enabled else RED
                     draw_text(frame, f"Beep: {'ON' if beep_enabled else 'OFF'} (B to toggle)",
@@ -396,6 +400,15 @@ def main():
                 hip_history.clear()
                 knee_history.clear() 
                 print("[INFO] Counter reset")
+            elif key == ord("s"):
+                saved_reps = reps
+                timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                with open("pushup_documentation.txt", "a") as file:
+                    file.write(f"[{timestamp}] Push-ups completed: {saved_reps}\n")
+                
+                print(f"[INFO] Successfully saved {saved_reps} reps to pushup_records.txt")
+
+
 
             elif key == ord("b"): # B = toggle beep sound on/off
                 beep_enabled = not beep_enabled
