@@ -2,8 +2,8 @@ import cv2
 import mediapipe as mp
 import numpy as np
 from collections import deque
-import datetime
-import time 
+
+
 
 # Different .py files we use to import functions from here
 from countdown import run_countdown
@@ -23,10 +23,10 @@ DOWN_CONFIRM_FRAMES = 2
 UP_CONFIRM_FRAMES = 2
 
 ANGLE_HISTORY_SIZE = 3
+PEACE_CONFIRM_FRAMES = 8
 
 BODY_ALIGNMENT_MTN = 130
 ALIGNMENT_VISIBILITY = 0.30
-
 
 
 WHITE = (255, 255, 255)
@@ -62,6 +62,7 @@ BODY = {
 elbow_history = deque(maxlen=ANGLE_HISTORY_SIZE)
 hip_history = deque(maxlen=ANGLE_HISTORY_SIZE)
 knee_history = deque(maxlen=ANGLE_HISTORY_SIZE)
+
 
 
 def calculate_angle(point_a, point_b, point_c):
@@ -136,16 +137,6 @@ def arm_visible(landmarks, side):
     wrist = landmarks[ids["wrist"]]
     return (shoulder.visibility >= ARM_VISIBILITY and elbow.visibility >= ARM_VISIBILITY and wrist.visibility >= ARM_VISIBILITY)
 
-def is_full_body_visible(landmarks, side):
-    ids = BODY[side]
-    head = landmarks[ids["ear"]].visibility
-    shoulder = landmarks[ids["shoulder"]].visibility
-    hip = landmarks[ids["hip"]].visibility
-    knee = landmarks[ids["knee"]].visibility
-    heel = landmarks[ids["heel"]].visibility
-    return (head >= BODY_VISIBILITY and shoulder >= BODY_VISIBILITY 
-            and hip >= BODY_VISIBILITY and knee >= BODY_VISIBILITY
-            and heel >= BODY_VISIBILITY)
 
 def get_elbow_angle(landmarks, side):
     ids = BODY[side]
@@ -262,7 +253,6 @@ def main():
     bottom_reached = False
     down_frames = 0
     up_frames = 0
-    saved_reps = 0
     beep_enabled = True  # Have the option to enable/disable the beep sound for user preference
 
 
@@ -270,11 +260,7 @@ def main():
         cap.release()
         cv2.destroyAllWindows()
         return
-
-    workout_start_time = time.time() #Total elapsed time of workout 
-
-
-
+    
     try:
         while cap.isOpened(): #While camera is opened, read the camera frame and process it
             camera_read_successfully, frame = cap.read() 
@@ -310,6 +296,8 @@ def main():
 
                 #Code for displaying         
                 draw_text(frame, f"Side: {side.upper()}", (25, 35), GREEN, 0.6, 2) #Displays side which is drawn by media pipe
+                draw_text(frame, f"L_visibility: {left_score:.2f}", (25, 65), WHITE, 0.5, 1)
+                draw_text(frame, f"R_visibility: {right_score:.2f}", (25, 90), WHITE, 0.5, 1)
 
                 # ARM AVAILABLE
                 if arm_visible(landmarks, side):
@@ -331,38 +319,34 @@ def main():
                         draw_text(frame, f"{filtered_elbow_angle:.1f}", (elbow_x_coord + 20, elbow_y_coord - 15), YELLOW, 0.9, 2) #Display the angle SLIGHTLY ABOVE AND RIGHT OF THE ELBOW JOINT
 
                     # REP LOGIC
-                    if is_full_body_visible(landmarks, side):
-                        draw_text(frame, "FULL BODY READY", (25, 115), GREEN, 0.6, 2)
-
-                        if filtered_elbow_angle is not None: 
-                            if filtered_elbow_angle <= DOWN_ANGLE:
-                                down_frames += 1 #I guess 3 frames is enough...
-                                if down_frames >= DOWN_CONFIRM_FRAMES:  
-                                    stage = "DOWN"
-                                    bottom_reached = True
-                                    down_frames = 0
-                                else:
-                                    down_frames = 0 #Set down_frames to 0 if elbow_angle is not below down_angle   
+                    if filtered_elbow_angle is not None: 
+                    
+                        if filtered_elbow_angle <= DOWN_ANGLE:
+                            down_frames += 1 #I guess 3 frames is enough...
+                            if down_frames >= DOWN_CONFIRM_FRAMES:  
+                                stage = "DOWN"
+                                bottom_reached = True
+                                down_frames = 0
+                        else:
+                            down_frames = 0 #Set down_frames to 0 if elbow_angle is not below down_angle   
 
                         # RETURN TO TOP
-                                if filtered_elbow_angle >= UP_ANGLE and bottom_reached: 
-                                    up_frames += 1
-                                    if up_frames >= UP_CONFIRM_FRAMES:
-                                        reps += 1
-                                        stage = "UP"
-                                        bottom_reached = False
-                                        up_frames = 0
-                                        print(f"Push-up completed! Total: {reps}")
-                                        if beep_enabled:
-                                            play_beep()  # Play the beep sound in a separate thread to avoid blocking the main loop
-                                else:
-                                    up_frames = 0
+                        if filtered_elbow_angle >= UP_ANGLE and bottom_reached: 
+                            up_frames += 1
+                            if up_frames >= UP_CONFIRM_FRAMES:
+                                reps += 1
+                                stage = "UP"
+                                bottom_reached = False
+                                up_frames = 0
+                                print(f"Push-up completed! Total: {reps}")
+                                if beep_enabled:
+                                    play_beep()  # Play a beep sound (after every pushup) in a separate thread to avoid blocking the main loop
                         else:
-                            draw_text(frame, "SHOW: HEAD, SHOULDER, BACK, KNEES, HEELS", (25, h - 65), ORANGE, 0.7, 2)
-                            down_frames = 0
                             up_frames = 0
 
                     # DISPLAY INFORMATION
+                    draw_text(frame, f"REPS: {reps}", (25, 145), GREEN, 1.25, 3)
+
                     beep_status_colour = GREEN if beep_enabled else RED
                     draw_text(frame, f"Beep: {'ON' if beep_enabled else 'OFF'} (B to toggle)",
                               (25, 350), beep_status_colour, 0.6, 1)
@@ -396,17 +380,6 @@ def main():
                 knee_history.clear()
                 draw_text(frame, "NO PERSON DETECTED", (25, h - 35), RED, 0.8, 2)
 
-            # Keep the counters visible even when the user's pose/arm is not detected.
-            draw_text(frame, f"REPS: {reps}", (25, 145), GREEN, 1.25, 3)
-            draw_text(frame, f"LAST SAVED: {saved_reps}", (CAM_WIDTH // 2 - 120, 40), YELLOW, 1.0, 2)
-
-            #Total workout stopwatch 
-            total_seconds = int(time.time() - workout_start_time)
-            minutes = total_seconds // 60 
-            seconds = total_seconds % 60 
-
-            draw_text(frame, f"TIME: {minutes:02d}:{seconds:02d}", (w - 210, 40), WHITE, 0.9, 2)
-
             # DISPLAY
             cv2.imshow("Side Push-Up Tracker", frame)
 
@@ -416,7 +389,7 @@ def main():
             if key == ord("q"):  # Q = quit
                 break
 
-            elif key in (ord("r"), ord("R")):  # R = reset counter and rep-tracking state
+            elif key == ord("r"):  #Reset counts, rep, stage default up, bottom reach false
                 reps = 0
                 stage = "UP"
                 bottom_reached = False
@@ -427,17 +400,6 @@ def main():
                 knee_history.clear() 
                 print("[INFO] Counter reset")
 
-            elif key == ord("s"):
-                saved_reps = reps
-                timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                with open("pushup_documentation.txt", "a") as file:
-                    file.write(f"[{timestamp}] Push-ups completed: {saved_reps}\n")
-                reps = 0 
-                stage = "Up"
-                bottom_reached = False
-                down_frames = 0
-                up_frames = 0
-                
             elif key == ord("b"): # B = toggle beep sound on/off
                 beep_enabled = not beep_enabled
                 status = "enabled" if beep_enabled else "disabled"
