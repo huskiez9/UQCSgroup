@@ -3,8 +3,6 @@ import mediapipe as mp
 import numpy as np
 from collections import deque
 
-
-
 # Different .py files we use to import functions from here
 from countdown import run_countdown
 from audio_beep import play_beep
@@ -23,7 +21,6 @@ DOWN_CONFIRM_FRAMES = 2
 UP_CONFIRM_FRAMES = 2
 
 ANGLE_HISTORY_SIZE = 3
-PEACE_CONFIRM_FRAMES = 8
 
 BODY_ALIGNMENT_MTN = 130
 ALIGNMENT_VISIBILITY = 0.30
