@@ -26,13 +26,16 @@ def draw_centered_text(frame, text, y, color=(255, 255, 255), scale=1.5, thickne
 
 def summary_screen(frame, reps, final_calories_burned, passed_time_sec):
     height, width = frame.shape[:2]
-    
-    blurred_frame = cv2.GaussianBlur(frame, (51, 51), 0)
-    dark_overlay = np.full_like(frame, (20, 20, 20)) # Dark gray overlay
+
+
+    #Create blurred frame first
+    blurred_frame = cv2.GaussianBlur(frame, (53, 53), 0)
+    #Create dark frame second
+    dark_overlay = np.full_like(frame, (20, 20, 20)) 
+    #Mesh them together
     summary_frame = cv2.addWeighted(blurred_frame, 0.4, dark_overlay, 0.6, 0)
     
     
-
     minutes = int(passed_time_sec // 60)
     seconds = int(passed_time_sec % 60)
     time_string = f"{minutes:02d}:{seconds:02d}"
@@ -46,7 +49,7 @@ def summary_screen(frame, reps, final_calories_burned, passed_time_sec):
     draw_centered_text(summary_frame, f"Calories Burned: {cal_string}", int(height * 0.60), YELLOW, scale=3, thickness=3)
     draw_centered_text(summary_frame, f"Time Elapsed: {time_string}", int(height * 0.75), ORANGE, scale=3, thickness=3)
     
-    # Draw Quit Instruction at the bottom
+
     draw_centered_text(summary_frame, "Press 'Q' to Exit", int(height * 0.95), (200, 200, 200), scale=1.5, thickness=2)
 
     # Display Loop

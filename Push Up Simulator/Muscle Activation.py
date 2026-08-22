@@ -25,9 +25,10 @@ DOWN_CONFIRM_FRAMES = 2
 UP_CONFIRM_FRAMES = 2
 ANGLE_HISTORY_SIZE = 3
 PEACE_CONFIRM_FRAMES = 8
-BODY_ALIGNMENT_MTN = 130
+BODY_ALIGNMENT_TOLERANT_ANGLE = 130
 ALIGNMENT_VISIBILITY = 0.30
 
+#COLOUR HEX CODES FOR EASIER REFERENCES
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 120)
 YELLOW = (0, 255, 255)
@@ -46,8 +47,7 @@ mp_draw = mp.solutions.drawing_utils
 pose = mp_pose.Pose(static_image_mode=False, model_complexity=1, smooth_landmarks=True, min_detection_confidence=0.45, min_tracking_confidence=0.45)
 
 #Landmark indices for left and right body parts
-BODY = {"left":  {"shoulder": 11, "elbow": 13, "wrist": 15, "hip": 23, "knee": 25, "ankle": 27, "ear": 7, "heel": 29},
-    "right": {"shoulder": 12, "elbow": 14, "wrist": 16, "hip": 24, "knee": 26, "ankle": 28, "ear": 8, "heel": 30}
+BODY = {"left":  {"shoulder": 11, "elbow": 13, "wrist": 15, "hip": 23, "knee": 25, "ankle": 27, "ear": 7, "heel": 29}, "right": {"shoulder": 12, "elbow": 14, "wrist": 16, "hip": 24, "knee": 26, "ankle": 28, "ear": 8, "heel": 30}
 }
 
 elbow_history = deque(maxlen=ANGLE_HISTORY_SIZE)
@@ -63,7 +63,7 @@ def calculate_angle(point_a, point_b, point_c):
     mag_ba = np.sqrt(ba_x ** 2 + ba_y ** 2)
     mag_bc = np.sqrt(bc_x ** 2 + bc_y ** 2)
 
-    if mag_ba < 1e-6 or mag_bc < 1e-6: #Return none if vector is too small to avoid zero division error
+    if mag_ba < 1e-6 or mag_bc < 1e-6:
         return None
     dot_product = ba_x * bc_x + ba_y * bc_y #Dot product of vectors BA and BC
     cosine = dot_product / (mag_ba * mag_bc) #Cosine of vectors BA and BC
@@ -77,21 +77,21 @@ def check_alignment(frame, landmarks, side):
     heel_raw_coord = landmarks[ids["heel"]]
     
     if (shoulder_raw_coord.visibility < ALIGNMENT_VISIBILITY or hip_raw_coord.visibility < ALIGNMENT_VISIBILITY or  heel_raw_coord.visibility < ALIGNMENT_VISIBILITY):
-        draw_text(frame, "ALIGNMENT NOT VISIBLE", (25, 415), ORANGE, 2.5, 2)
+        draw_text(frame, "ALIGNMENT NOT VISIBLE!", (25, 415), ORANGE, 2.5, 2)
         return False 
     body_angle = calculate_angle(get_point(shoulder_raw_coord), get_point(hip_raw_coord), get_point(heel_raw_coord))
 
-    alignment_correct = (body_angle >= BODY_ALIGNMENT_MTN)
+    alignment_correct = (body_angle >= BODY_ALIGNMENT_TOLERANT_ANGLE)
     height, width = frame.shape[:2]
 
-    shoulder_pixel_coord = get_pixel(shoulder_raw_coord, width, height)
+    shoulder_pixel_coord = get_pixel(shoulder_raw_coord, width, height) #Convert to pixel cords
     heel_pixel_coord = get_pixel(heel_raw_coord, width, height)
     
     if alignment_correct:
         cv2.line(frame, shoulder_pixel_coord, heel_pixel_coord, GREEN, 6, cv2.LINE_AA)
-        draw_text(frame, "ALIGNMENT CORRECT", (25, 415), GREEN, 2.5, 2)
+        draw_text(frame, "Alignment is perfect straight!", (25, 415), GREEN, 2.5, 2)
     else:
-        draw_text(frame, "ALIGNMENT NOT CORRECT", (25, 415), RED, 2.5, 2)
+        draw_text(frame, "Alignment is not strict!", (25, 415), RED, 2.5, 2)
         
     shoulder_x, shoulder_y = shoulder_pixel_coord
     draw_text(frame, f"{body_angle:.1f}", (shoulder_x - 80, shoulder_y - 10), WHITE, 0.7)
@@ -114,7 +114,7 @@ def arm_visibility_score(landmarks, side):
     shoulder = landmarks[indice_list["shoulder"]].visibility
     elbow = landmarks[indice_list["elbow"]].visibility          
     wrist = landmarks[indice_list["wrist"]].visibility                              
-    return (shoulder + elbow + wrist) / 3.0
+    return (shoulder + elbow + wrist) / 3.0 #Weighted score
 
 def choose_side(landmarks):
     left_score = arm_visibility_score(landmarks, "left") #Retrieve visibility score for left and right side to determine side to pick
