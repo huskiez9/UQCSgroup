@@ -405,11 +405,12 @@ def main():
                 timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 with open("pushup_documentation.txt", "a") as file:
                     file.write(f"[{timestamp}] Push-ups completed: {saved_reps}\n")
+                reps = 0 
+                stage = "Up"
+                bottom_reached = False
+                down_frames = 0
+                up_frames = 0
                 
-                print(f"[INFO] Successfully saved {saved_reps} reps to pushup_records.txt")
-
-
-
             elif key == ord("b"): # B = toggle beep sound on/off
                 beep_enabled = not beep_enabled
                 status = "enabled" if beep_enabled else "disabled"
