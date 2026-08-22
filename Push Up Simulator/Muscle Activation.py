@@ -223,7 +223,7 @@ def main():
     down_frames = 0
     up_frames = 0
 
-    if not run_countdown(cap, seconds=10): #Run countdown before starting the pushup tracker
+    if not run_countdown(cap, seconds=5): #Run countdown before starting the pushup tracker
         cap.release()
         cv2.destroyAllWindows()
         return
@@ -308,6 +308,7 @@ def main():
                                 bottom_reached = False
                                 up_frames = 0
                                 print(f"Push-up completed! Total: {reps}")
+                                play_beep() # Play beep sound when a pushup is completed with correct form
                         else:
                             up_frames = 0
 
