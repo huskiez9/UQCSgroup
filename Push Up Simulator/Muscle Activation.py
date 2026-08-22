@@ -3,8 +3,10 @@ import mediapipe as mp
 import numpy as np
 from collections import deque
 
+
 # Features from different files
 from countdown import run_countdown
+from audio_beep import play_beep
 
 #Some parameters
 CAM_WIDTH = 1280
@@ -21,8 +23,7 @@ UP_CONFIRM_FRAMES = 3
 
 ANGLE_HISTORY_SIZE = 3
 
-BODY_ALIGNMENT_MTN = 170
-HEAD_ALIGNMENT_MTN = 170
+BODY_ALIGNMENT_MTN = 130
 ALIGNMENT_VISIBILITY = 0.30
 
 
@@ -79,7 +80,7 @@ def check_alignment(frame, landmarks, side):
     shoulder_raw_coord = landmarks[ids["shoulder"]]
     hip_raw_coord = landmarks[ids["hip"]]
     heel_raw_coord = landmarks[ids["heel"]]
-    if (shoulder_raw_coord.visibility < ALIGNMENT_VISIBILITY and  hip_raw_coord.visibility < ALIGNMENT_VISIBILITY and heel_raw_coord.visibility < ALIGNMENT_VISIBILITY):
+    if (shoulder_raw_coord.visibility < ALIGNMENT_VISIBILITY or  hip_raw_coord.visibility < ALIGNMENT_VISIBILITY or heel_raw_coord.visibility < ALIGNMENT_VISIBILITY):
         draw_text(frame, "PUSHUP ALIGNMENT NOT VISIBLE", (25, 325), ORANGE, 0.7, 2)
     body_angle = calculate_angle(get_point(shoulder_raw_coord), get_point(hip_raw_coord), get_point(heel_raw_coord))
     alignment_correct = (body_angle >= BODY_ALIGNMENT_MTN)
@@ -123,7 +124,6 @@ def choose_side(landmarks):
     if right_score >= left_score:
         return "right"
     return "left"
-
 
 def arm_visible(landmarks, side):
     ids = BODY[side]
@@ -274,6 +274,7 @@ def main():
     bottom_reached = False
     down_frames = 0
     up_frames = 0
+    beep_enabled = True  # Have the option to enable/disable the beep sound for user preference
 
     if not run_countdown(cap, seconds=5): #Run countdown before starting the pushup tracker
         cap.release()
@@ -362,11 +363,18 @@ def main():
                                 bottom_reached = False
                                 up_frames = 0
                                 print(f"Push-up completed! Total: {reps}")
+                                if beep_enabled:
+                                    # Play beep sound when a push-up is completed
+                                    play_beep()
                         else:
                             up_frames = 0
 
                     # DISPLAY INFORMATION
                     draw_text(frame, f"REPS: {reps}", (25, 145), GREEN, 1.25, 3)
+
+                    beep_status_colour = GREEN if beep_enabled else RED
+                    draw_text(frame, f"Beep: {'ON' if beep_enabled else 'OFF'} (B to toggle)",
+                              (25, 350), beep_status_colour, 0.6, 1)
 
                     stage_color = GREEN if stage == "UP" else ORANGE
                     draw_text(frame, f"STAGE: {stage}", (25, 185), stage_color, 0.7, 2)
@@ -416,6 +424,11 @@ def main():
                 hip_history.clear()
                 knee_history.clear() 
                 print("[INFO] Counter reset")
+
+            elif key == ord("b"): # B = toggle beep sound on/off
+                beep_enabled = not beep_enabled
+                status = "enabled" if beep_enabled else "disabled"
+                print(f"[INFO] Beep sound is: {status}")
 
     finally:
         cap.release()
