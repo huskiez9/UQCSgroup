@@ -12,7 +12,7 @@ from audio_beep import play_beep
 CAM_WIDTH = 1280
 CAM_HEIGHT = 720
 
-
+CALORIES_PER_REP = 0.3
 WEIGHT_KG = 70
 ACTIVITY_MET_MOD = 3.8
 
@@ -231,29 +231,16 @@ def draw_active_side(frame, landmarks, side):
 
     return points
 
-def calorie_tracker(frame, weight_kg, passed_time_sec, activity_met_mod):
+
+def calorie_tracker(frame, reps):
     height, width = frame.shape[:2]
-    passed_time_min = passed_time_sec / 60
-    calories_burned = passed_time_min * (1/200) * 3.5 * activity_met_mod * weight_kg
-
+    calories_burned = reps * CALORIES_PER_REP
     calorie_text = f"Calories: {calories_burned:.2f} kcal"
-
-    # Work out text width so it stays in the top-right corner
-    font = cv2.FONT_HERSHEY_PLAIN
-    scale = 1.2
-    thickness = 2
-    text_width = cv2.getTextSize(calorie_text, font, scale, thickness)[0][0]
-
-    draw_text(
-        frame,
-        calorie_text,
-        (width - text_width - 25, 35),
-        YELLOW,
-        scale,
-        thickness
-    )
-
+    draw_text(frame, calorie_text, (width - 220, 35), YELLOW, 1.2, 2)
     return calories_burned
+
+
+
 
 def main():
     cap = cv2.VideoCapture(0)   
@@ -405,7 +392,7 @@ def main():
                 draw_text(frame, "NO PERSON DETECTED", (25, h - 35), RED, 0.8, 2)
 
             # DISPLAY CALORIES
-            calorie_tracker(frame, WEIGHT_KG, passed_time_sec, ACTIVITY_MET_MOD)
+            calorie_tracker(frame, reps)
 
             # DISPLAY
             cv2.imshow("Side Push-Up Tracker", frame)
