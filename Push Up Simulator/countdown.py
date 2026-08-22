@@ -1,7 +1,7 @@
 import cv2
 import time
 
-def run_countdown(cap, seconds=60):
+def run_countdown(cap, seconds=5):
     """
     Runs a countdown timer and shows a countdown overlay before real tracking starts.
     Return True if the countdown is completed, and False if the user presses 'q' to quit.
