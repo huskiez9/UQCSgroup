@@ -352,14 +352,13 @@ def main():
                             up_frames = 0
 
                     # DISPLAY INFORMATION
-                    draw_text(frame, f"REPS: {reps}", (25, 145), GREEN, 4.5, 3)
+                    draw_text(frame, f"REPS: {reps}", (40, 90), GREEN, 4.5, 3)
 
                     beep_status_colour = GREEN if beep_enabled else RED
-                    draw_text(frame, f"Beep: {'ON' if beep_enabled else 'OFF'} (B to toggle)",
-                              (25, 350), beep_status_colour, 2.5, 1)
+                    draw_text(frame, f"Beep: {'ON' if beep_enabled else 'OFF'} (B to toggle)", (40, 650), beep_status_colour, 2.5, 1)
 
                     stage_color = GREEN if stage == "UP" else ORANGE
-                    draw_text(frame, f"STAGE: {stage}", (25, 185), stage_color, 4, 2)
+                    draw_text(frame, f"STAGE: {stage}", (40, 180), stage_color, 4, 2)
 
                     #if filtered_elbow_angle is not None:
                         #draw_text(frame, f"Elbow: {filtered_elbow_angle:.1f}", (25, 225), WHITE, 0.6, 1)
