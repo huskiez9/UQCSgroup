@@ -240,32 +240,6 @@ def draw_active_side(frame, landmarks, side):
 
     return points
 
-def elbow_flexion_angle(frame, landmarks, side):
-    height, width = frame.shape[:2]
-    elbow_angle = get_elbow_angle(landmarks, side)
-    if elbow_angle >= 160:
-        startattempt = True
-    
-        if startattempt == True:
-            
-            if elbow_angle < 160: 
-                if elbow_angle <= 90:
-                    end_rep = True
-                else:
-                    transition_rep  = True
-            else: 
-                invalidtext = "Invalid Rep!"
-
-
-        cv2.putText(frame,
-                    invalidtext,
-                    (width-500,height-500),
-                    cv2.FONT_HERSHEY_SIMPLEX,
-                    2,
-                    (255,255,255),
-                    4,
-                    cv2.LINE_AA)
-
     
 def main():
     cap = cv2.VideoCapture(0)   
@@ -335,8 +309,6 @@ def main():
 
                 # ARM AVAILABLE
                 if arm_visible(landmarks, side):
-
-                    elbow_flexion_angle(frame, landmarks, side)
 
                     points = draw_active_side(frame, landmarks, side) 
 
