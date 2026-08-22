@@ -298,7 +298,8 @@ def main():
         return
     
     start_time = start_timer()
-
+    key = -1
+    
     try:
         while cap.isOpened(): #While camera is opened, read the camera frame and process it
             if target_reps is not None:
