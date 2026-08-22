@@ -147,8 +147,8 @@ def get_chest(frame,landmarks):
     left_hip = get_point(landmarks[24])
     right_hip = get_point(landmarks[23])
 
-    chest_x = 0.5*(left_shoulder[0]+right_shoulder[0])+ left_shoulder[0]
-    chest_y = left_shoulder[1]- 0.33*(left_shoulder[1]+left_hip[1]) 
+    chest_x = 0.5*(left_shoulder[0]+right_shoulder[0])
+    chest_y = left_shoulder[1] - 0.33*(left_shoulder[1] - left_hip[1]) 
     chest_coord = (int(chest_x * width), int(chest_y * height))
     return chest_coord
 
