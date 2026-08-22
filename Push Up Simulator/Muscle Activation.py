@@ -2,7 +2,7 @@ import cv2
 import mediapipe as mp
 import numpy as np
 from collections import deque
-
+import time
 
 
 # Different .py files we use to import functions from here
@@ -12,6 +12,10 @@ from audio_beep import play_beep
 #Some parameters
 CAM_WIDTH = 1280
 CAM_HEIGHT = 720
+
+
+WEIGHT_KG = 70
+ACTIVITY_MET_MOD = 3.8
 
 DOWN_ANGLE = 95.5
 UP_ANGLE = 160
@@ -236,7 +240,20 @@ def draw_active_side(frame, landmarks, side):
 
     return points
 
-    
+def calorie_tracker(frame, weight_kg, passed_time_sec, activity_met_mod):
+    height, width = frame.shape[:2]
+    passed_time_min = passed_time_sec/60
+    calories_burned = passed_time_min * (1/200) * 3.5 * activity_met_mod * weight_kg
+    cv2.putText(frame,
+                str(calories_burned),
+                (width-500,height-500),
+                2,
+                (100,100,100),
+                4,
+                cv2.LINE_AA)
+    return calories_burned
+
+   
 def main():
     cap = cv2.VideoCapture(0)   
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, CAM_WIDTH) #Defne the width and height of camera frame
@@ -261,8 +278,14 @@ def main():
         cv2.destroyAllWindows()
         return
     
+    start_time = time.monotonic()
+
     try:
         while cap.isOpened(): #While camera is opened, read the camera frame and process it
+
+            current_time = time.monotonic #current measured time
+            passed_time_sec = int(current_time) - int(start_time) #elapsed time
+
             camera_read_successfully, frame = cap.read() 
             if not camera_read_successfully:
                 print("Sorry, camera frame couldnt be read!")
