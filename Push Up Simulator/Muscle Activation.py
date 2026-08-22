@@ -250,9 +250,30 @@ def calorie_tracker(frame, reps):
     return calories_burned
 
 
+def target_rep_rate(frame, passed_time_sec, reps, target_reps):
+	height, width = frame.shape[:2]
+	passed_time_min = passed_time_sec/60
+	
+	user_rep_rate = 0
+	if passed_time_min != 0:
+		user_rep_rate = reps/passed_time_min
+	if user_rep_rate < target_reps:
+		display_goal = "Below target!"
+	elif user_rep_rate == target_reps:
+		display_goal = "Meeting your target!"
+	else:
+		display_goal = "Smashing it!"
+	
+	target_reps_text = f" Target Reps: {target_reps:.2f} per min"
+	current_reps_text = f" Current Reps: {user_rep_rate:.2f} per min"
+	draw_text(frame, target_reps_text, (width - 220, 50), YELLOW, 1.2, 2)
+	draw_text(frame, current_reps_text, (width - 220, 75), YELLOW, 1.2, 2)
+	
+	return target_reps
 
 
 def main():
+    target_reps = None
     cap = cv2.VideoCapture(0)   
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, CAM_WIDTH) #Defne the width and height of camera frame
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, CAM_HEIGHT) #Define the width and height of camera frame
@@ -280,7 +301,13 @@ def main():
 
     try:
         while cap.isOpened(): #While camera is opened, read the camera frame and process it
-
+            if target_reps is not None:
+                target_rep_rate(
+                    frame,
+                    passed_time_sec,
+                    reps,
+                    target_reps
+                                )
             current_time = time.monotonic() #current measured time
             passed_time_sec = current_time - start_time #elapsed time
 
@@ -373,6 +400,20 @@ def main():
                     elapsed_str = get_total_time(start_time)
                     draw_text(frame, f"Time: {elapsed_str}", (w - 220, 90), WHITE, 1.2, 2)
 
+                    if key == ord("1"):
+                            target_reps = 10
+                    elif key == ord("2"):
+                            target_reps = 15
+                    elif key == ord("3"):
+                        target_reps = 30
+
+                    if key in [ord("1"), ord("2"), ord("3")]: 
+                        target_rpm = target_rep_rate(frame,
+                                                        passed_time_sec,
+                                                        reps,
+                                                        target_reps,
+                                                                 )
+                                    
                     if filtered_elbow_angle is not None:
                         draw_text(frame, f"Elbow: {filtered_elbow_angle:.1f}", (25, 225), WHITE, 0.6, 1)
 
@@ -426,7 +467,6 @@ def main():
                 beep_enabled = not beep_enabled
                 status = "enabled" if beep_enabled else "disabled"
                 print(f"[INFO] Beep sound is: {status}")
-
     finally:
         cap.release()
         pose.close()
