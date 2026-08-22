@@ -5,7 +5,6 @@ from collections import deque
 import time
 
 
-# Different .py files we use to import functions from here
 from countdown import run_countdown
 from audio_beep import play_beep
 
@@ -49,16 +48,13 @@ mp_draw = mp.solutions.drawing_utils
 
 
 #Pose setting
-pose = mp_pose.Pose(
-    static_image_mode=False, model_complexity=1, smooth_landmarks=True,
-    min_detection_confidence=0.45, min_tracking_confidence=0.45
+pose = mp_pose.Pose(static_image_mode=False, model_complexity=1, smooth_landmarks=True, min_detection_confidence=0.45, min_tracking_confidence=0.45
 )
 
 
 
 #Landmark indices for left and right body parts
-BODY = {
-    "left":  {"shoulder": 11, "elbow": 13, "wrist": 15, "hip": 23, "knee": 25, "ankle": 27, "ear": 7, "heel": 29},
+BODY = {"left":  {"shoulder": 11, "elbow": 13, "wrist": 15, "hip": 23, "knee": 25, "ankle": 27, "ear": 7, "heel": 29},
     "right": {"shoulder": 12, "elbow": 14, "wrist": 16, "hip": 24, "knee": 26, "ankle": 28, "ear": 8, "heel": 30}
 }
 
@@ -89,8 +85,8 @@ def check_alignment(frame, landmarks, side):
     shoulder_raw_coord = landmarks[ids["shoulder"]]
     hip_raw_coord = landmarks[ids["hip"]]
     heel_raw_coord = landmarks[ids["heel"]]
-    if (shoulder_raw_coord.visibility < ALIGNMENT_VISIBILITY or  hip_raw_coord.visibility < ALIGNMENT_VISIBILITY or heel_raw_coord.visibility < ALIGNMENT_VISIBILITY):
-        draw_text(frame, "PUSHUP ALIGNMENT NOT VISIBLE", (25, 325), ORANGE, 0.7, 2)
+    if (shoulder_raw_coord.visibility < ALIGNMENT_VISIBILITY or hip_raw_coord.visibility < ALIGNMENT_VISIBILITY or heel_raw_coord.visibility < ALIGNMENT_VISIBILITY):
+        return False
     body_angle = calculate_angle(get_point(shoulder_raw_coord), get_point(hip_raw_coord), get_point(heel_raw_coord))
     alignment_correct = (body_angle >= BODY_ALIGNMENT_MTN)
     height, width = frame.shape[:2]
@@ -159,16 +155,11 @@ def get_body_angles(landmarks, side):
     hip_angle = None
     knee_angle = None
 
-    #CALCULATE HIP ANGLE BASED ON SHOULDER, HIP AND KNEE LANDMARKS IF ABOVE BODY_VISIBILITY
-    if (shoulder_lm.visibility >= BODY_VISIBILITY and hip_lm.visibility >= BODY_VISIBILITY
-            and knee_lm.visibility >= BODY_VISIBILITY):
-        hip_angle = calculate_angle(get_point(shoulder_lm), get_point(hip_lm), get_point(knee_lm))
+    if (shoulder_lm.visibility >= BODY_VISIBILITY and hip_lm.visibility >= BODY_VISIBILITY and knee_lm.visibility >= BODY_VISIBILITY):
+        hip_angle = calculate_angle(get_point(shoulder_lm), get_point(hip_lm), get_point(knee_lm))   #CALCULATE KNEE ANGLE BASED ON HIP, KNEE AND ANKLE IF ABOVE BODY_VISIBILITY
 
-   #CALCULATE KNEE ANGLE BASED ON HIP, KNEE AND ANKLE IF ABOVE BODY_VISIBILITY
-    if (hip_lm.visibility >= BODY_VISIBILITY and knee_lm.visibility >= BODY_VISIBILITY
-            and ankle_lm.visibility >= BODY_VISIBILITY):
+    if (hip_lm.visibility >= BODY_VISIBILITY and knee_lm.visibility >= BODY_VISIBILITY and ankle_lm.visibility >= BODY_VISIBILITY):
         knee_angle = calculate_angle(get_point(hip_lm), get_point(knee_lm), get_point(ankle_lm))
-
     return (hip_angle, knee_angle)
 
 def get_chest(frame,landmarks):
@@ -242,18 +233,28 @@ def draw_active_side(frame, landmarks, side):
 
 def calorie_tracker(frame, weight_kg, passed_time_sec, activity_met_mod):
     height, width = frame.shape[:2]
-    passed_time_min = passed_time_sec/60
+    passed_time_min = passed_time_sec / 60
     calories_burned = passed_time_min * (1/200) * 3.5 * activity_met_mod * weight_kg
-    cv2.putText(frame,
-                str(calories_burned),
-                (width-500,height-500),
-                2,
-                (100,100,100),
-                4,
-                cv2.LINE_AA)
+
+    calorie_text = f"Calories: {calories_burned:.2f} kcal"
+
+    # Work out text width so it stays in the top-right corner
+    font = cv2.FONT_HERSHEY_PLAIN
+    scale = 1.2
+    thickness = 2
+    text_width = cv2.getTextSize(calorie_text, font, scale, thickness)[0][0]
+
+    draw_text(
+        frame,
+        calorie_text,
+        (width - text_width - 25, 35),
+        YELLOW,
+        scale,
+        thickness
+    )
+
     return calories_burned
 
-   
 def main():
     cap = cv2.VideoCapture(0)   
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, CAM_WIDTH) #Defne the width and height of camera frame
@@ -402,6 +403,9 @@ def main():
                 hip_history.clear()
                 knee_history.clear()
                 draw_text(frame, "NO PERSON DETECTED", (25, h - 35), RED, 0.8, 2)
+
+            # DISPLAY CALORIES
+            calorie_tracker(frame, WEIGHT_KG, passed_time_sec, ACTIVITY_MET_MOD)
 
             # DISPLAY
             cv2.imshow("Side Push-Up Tracker", frame)
