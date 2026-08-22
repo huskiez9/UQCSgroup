@@ -1,9 +1,12 @@
+
+#Import modules
 import cv2
 import mediapipe as mp
 import numpy as np
 from collections import deque
 import time
 
+#Import specialised modules
 from countdown import run_countdown
 from audio_beep import play_beep
 from stopwatch import start_timer, get_total_time
@@ -34,6 +37,7 @@ GREEN = (0, 255, 120)
 YELLOW = (0, 255, 255)
 ORANGE = (0, 165, 255)
 RED = (0, 0, 255)
+TORQOISE_BLUE = (0, 255, 239)
 
 ARM_COLOR = (0, 255, 255)
 TORSO_COLOR = (0, 255, 120)
@@ -50,6 +54,7 @@ pose = mp_pose.Pose(static_image_mode=False, model_complexity=1, smooth_landmark
 BODY = {"left":  {"shoulder": 11, "elbow": 13, "wrist": 15, "hip": 23, "knee": 25, "ankle": 27, "ear": 7, "heel": 29}, "right": {"shoulder": 12, "elbow": 14, "wrist": 16, "hip": 24, "knee": 26, "ankle": 28, "ear": 8, "heel": 30}
 }
 
+#Deque has "max" feature which could drop item, whereas list could not
 elbow_history = deque(maxlen=ANGLE_HISTORY_SIZE)
 hip_history = deque(maxlen=ANGLE_HISTORY_SIZE)
 knee_history = deque(maxlen=ANGLE_HISTORY_SIZE)
@@ -111,10 +116,10 @@ def filter_angle(history, value): #Calculate the median of the angles to "filter
 
 def arm_visibility_score(landmarks, side):
     indice_list = BODY[side]
-    shoulder = landmarks[indice_list["shoulder"]].visibility
-    elbow = landmarks[indice_list["elbow"]].visibility          
-    wrist = landmarks[indice_list["wrist"]].visibility                              
-    return (shoulder + elbow + wrist) / 3.0 #Weighted score
+    shoulder_visibility_score = landmarks[indice_list["shoulder"]].visibility
+    elbow_visibility_score = landmarks[indice_list["elbow"]].visibility          
+    wrist_visibility_score = landmarks[indice_list["wrist"]].visibility                              
+    return (shoulder_visibility_score + elbow_visibility_score + wrist_visibility_score) / 3.0 #Weighted score
 
 def choose_side(landmarks):
     left_score = arm_visibility_score(landmarks, "left") #Retrieve visibility score for left and right side to determine side to pick
@@ -196,6 +201,7 @@ def draw_active_side(frame, landmarks, side):
     # TORSO
     if landmarks[landmarks_dict["hip"]].visibility >= BODY_VISIBILITY and landmarks[landmarks_dict["shoulder"]].visibility >= BODY_VISIBILITY:
         cv2.line(frame, points["shoulder"], points["hip"], (0, 255, 255), 5, cv2.LINE_AA) 
+    #Line aa is smoothed jagged line
 
     # UPPER LEG
     if (landmarks[landmarks_dict["hip"]].visibility >= BODY_VISIBILITY and landmarks[landmarks_dict["knee"]].visibility >= BODY_VISIBILITY):
@@ -327,19 +333,20 @@ def main():
                                 bottom_reached = False
                                 up_frames = 0
                                 print(f"Push-up completed! Total: {reps}")
+
+                                event_start = time.perf_counter()
                                 if beep_enabled:
                                     play_beep()
                                 check_and_trigger(reps)
                                 check_milestones(reps)
                                 check_target(reps, target_reps)
+                                event_time = (time.perf_counter() - event_start) * 1000
+                                print(f"Rep event took: {event_time:.2f} ms")
                         else:
                             up_frames = 0
 
-                # BODY FOUND BUT ARM NOT RELIABLE
                 else:
                     elbow_history.clear()
-                    # Optional: warning when body is found but arm is covered
-                    # draw_text(frame, "BODY FOUND - SHOW ARM TO CAMERA", (25, h - 35), RED, 0.7, 2)
 
             else:
                 # NO PERSON DETECTED
@@ -347,16 +354,12 @@ def main():
                 hip_history.clear()
                 knee_history.clear()
                 draw_text(frame, "ERROR! OUT OF FOCUS!", (w // 2 - 350, h // 2), RED, 4.0, 4)
-
-            # ==========================================
-            # ALWAYS DRAW UI ELEMENTS (UN-INDENTED)
-            # ==========================================
             
             draw_text(frame, f"REPS: {reps}", (40, 90), GREEN, 4.5, 3)
 
             if target_reps is not None:
                 if reps >= target_reps:
-                    draw_text(frame, f"TARGET REP REACHED BROCHACHO!",(w - 600, 150), GREEN, 1.5, 2)
+                    draw_text(frame, f"TARGET REP REACHED!",(w - 600, 150), GREEN, 1.5, 2)
                 else:
                     draw_text(frame, f"TARGET: {target_reps}",(w - 300, 150), WHITE, 1.5, 2)
 
@@ -372,19 +375,19 @@ def main():
             # Only display specific joint angles if they exist and someone is actively tracked
             if results.pose_landmarks and arm_visible(landmarks, side):
                 if filtered_elbow_angle is not None:
-                    draw_text(frame, f"Elbow: {filtered_elbow_angle:.1f}", (25, 225), WHITE, 0.6, 1)
+                    draw_text(frame, f"Elbow: {filtered_elbow_angle:.1f} deg", (25, 225), TORQOISE_BLUE, 1.3, 1)
 
                 if hip_angle is not None:
                     hip_color = GREEN if hip_angle >= 160 else RED
-                    draw_text(frame, f"Hip: {hip_angle:.1f}", (25, 255), hip_color, 0.6, 1)
+                    draw_text(frame, f"Hip: {hip_angle:.1f}", (25, 255), hip_color, 1.3, 1)
                 else:
-                    draw_text(frame, "Hip not visible", (25, 255), ORANGE, 0.55, 1)
+                    draw_text(frame, "Hip not visible!", (25, 255), RED, 1.3, 1)
 
                 if knee_angle is not None:
-                    knee_color = GREEN if knee_angle >= 160 else ORANGE
-                    draw_text(frame, f"Knee: {knee_angle:.2f}", (25, 285), knee_color, 0.6, 1)
+                    knee_color = GREEN if knee_angle >= 160 else RED
+                    draw_text(frame, f"Knee: {knee_angle:.2f}", (25, 285), knee_color, 1.3, 1)
                 else:
-                    draw_text(frame, "Knee not visible!", (25, 285), ORANGE, 0.55, 1)
+                    draw_text(frame, "Knee not visible!", (25, 285), RED, 1.3, 1)
 
             # DISPLAY CALORIES
             calorie_tracker(frame, reps)
@@ -402,7 +405,8 @@ def main():
             if key == ord("q"):  # Q = quit
                 break
 
-            elif key == ord("r"):  #Reset counts, rep, stage default up, bottom reach false
+            elif key == ord("r"):  
+                #r key for reset. Reset reps, assume user is in the "up" position, clear all elbow history to reset weighting
                 reps = 0
                 stage = "UP"
                 bottom_reached = False
@@ -424,7 +428,7 @@ def main():
                 final_calories_burned = reps * CALORIES_PER_REP
                 cap.release()
                 cv2.destroyWindow("Side Push-Up Tracker")
-                summary_screen(frame, reps, final_calories_burned, passed_time_sec )
+                summary_screen(frame, reps, final_calories_burned, passed_time_sec ) #Window crashes, leading to summary screen
 
             elif key == ord("1"):
                 target_reps = 5
@@ -436,8 +440,15 @@ def main():
                 target_reps = 40
             elif key == ord("5"):
                 target_reps = 50
+            elif key == ord("6"):
+                target_reps = 60
+            elif key == ord("7"):
+                target_reps = 70
+            elif key == ord("8"):
+                target_reps = 80
             elif key == ord("9"):
                 target_reps = 90
+        
         
     finally:
         cap.release()
