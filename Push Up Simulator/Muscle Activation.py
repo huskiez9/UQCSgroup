@@ -343,7 +343,6 @@ def main():
                                 bottom_reached = False
                                 up_frames = 0
                                 print(f"Push-up completed! Total: {reps}")
-                                play_beep() # Play beep sound when a pushup is completed with correct form
                         else:
                             up_frames = 0
 
