@@ -3,6 +3,8 @@ import mediapipe as mp
 import numpy as np
 from collections import deque
 
+# Features from different files
+from countdown import run_countdown
 
 #Some parameters
 CAM_WIDTH = 1280
