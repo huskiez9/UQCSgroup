@@ -9,13 +9,9 @@ from countdown import run_countdown
 from audio_beep import play_beep
 from stopwatch import start_timer, get_total_time
 from six_seven import check_and_trigger, draw_if_active
-<<<<<<< Updated upstream
 from Summary import summary_screen
-=======
-
 from motivation import check_milestones, check_target, draw_if_active as draw_motivation, reset as reset_motivation
 
->>>>>>> Stashed changes
 #Some parameters
 CAM_WIDTH = 1280
 CAM_HEIGHT = 720
