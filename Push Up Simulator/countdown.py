@@ -42,7 +42,7 @@ def run_countdown(cap, seconds=5):
                     4,
                     cv2.LINE_AA)
 
-        cv2.imshow("Countdown", frame)
+        cv2.imshow("Side Push-Up Tracker", frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             return False  # User pressed 'q' to quit
 
