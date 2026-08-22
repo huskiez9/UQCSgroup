@@ -2,8 +2,8 @@ import cv2
 import mediapipe as mp
 import numpy as np
 from collections import deque
-import time
-from pathlib import Path
+
+
 
 # Different .py files we use to import functions from here
 from countdown import run_countdown
@@ -41,9 +41,7 @@ LEG_COLOR = (255, 180, 0)
 
 #Mediapipe setting
 mp_pose = mp.solutions.pose
-mp_draw = mp.solutions.drawing_utils
-mp_hands = mp.solutions.hands
-
+mp_draw = mp.solutions.drawing_utilsmp_hands = mp.solutions.hands
 
 #Pose setting
 pose = mp_pose.Pose(
@@ -51,11 +49,7 @@ pose = mp_pose.Pose(
     min_detection_confidence=0.45, min_tracking_confidence=0.45
 )
 
-hands = mp_hands.Hands(
-    max_num_hands=1, 
-    min_detection_confidence=0.9, 
-    min_tracking_confidence=0.6
-)
+
 
 #Landmark indices for left and right body parts
 BODY = {
@@ -283,9 +277,7 @@ def main():
             results = pose.process(rgb)
             rgb.flags.writeable = True
 
-            # POSE DETECTED
-
-            peace_detected = False
+        
             if results.pose_landmarks:
                 landmarks = results.pose_landmarks.landmark
                 
