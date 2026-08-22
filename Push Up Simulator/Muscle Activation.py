@@ -8,6 +8,7 @@ import time
 from countdown import run_countdown
 from audio_beep import play_beep
 from stopwatch import start_timer, get_total_time
+from six_seven import check_and_trigger, draw_if_active
 
 #Some parameters
 CAM_WIDTH = 1280
@@ -359,7 +360,10 @@ def main():
                                 up_frames = 0
                                 print(f"Push-up completed! Total: {reps}")
                                 if beep_enabled:
-                                    play_beep()  # Play a beep sound (after every pushup) in a separate thread to avoid blocking the main loop
+                                    # Play a beep sound (after every pushup) in a separate thread to avoid blocking the main loop
+                                    play_beep()
+                                # Check if the reps reached '67' reps and trigger the animation
+                                check_and_trigger(reps)
                         else:
                             up_frames = 0
 
@@ -410,6 +414,9 @@ def main():
 
             # DISPLAY CALORIES
             calorie_tracker(frame, reps)
+
+            # to draw the call so it actually renders
+            draw_if_active(frame)
 
             # DISPLAY
             cv2.imshow("Side Push-Up Tracker", frame)

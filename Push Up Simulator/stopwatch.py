@@ -12,8 +12,3 @@ def get_total_time(start_time):
     seconds = total_seconds % 60
 
     return (f"{minutes:02d}:{seconds:02d}")
-
-
-
-
-
