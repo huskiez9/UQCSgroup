@@ -4,7 +4,7 @@ import threading
 
 SAMPLE_RATE = 44100
 DURATION = 0.15
-FREQUENCY = 2000 #880 cycles per second. More cycles higher pitch
+FREQUENCY = 800 #880 cycles per second. More cycles higher pitch
 
 
 

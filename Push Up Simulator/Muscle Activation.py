@@ -283,17 +283,13 @@ def main():
         
             if results.pose_landmarks:
                 landmarks = results.pose_landmarks.landmark
-                
-                mp_draw.draw_landmarks(frame, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
-                    mp_draw.DrawingSpec(color=(100, 100, 100), thickness=2, circle_radius=2),
-                    mp_draw.DrawingSpec(color=(80, 80, 80), thickness=2, circle_radius=2))
 
                 # PICK BEST SIDE
                 side = choose_side(landmarks)
                 left_score = arm_visibility_score(landmarks, "left")
                 right_score = arm_visibility_score(landmarks, "right")
 
-                # ARM AVAILABLE
+                # CHECK IF COMPONENTS OF ARMS ARE VISIBLE
                 if arm_visible(landmarks, side):
 
                     points = draw_active_side(frame, landmarks, side) 
@@ -312,7 +308,7 @@ def main():
                         elbow_x_coord, elbow_y_coord = points["elbow"]
                         draw_text(frame, f"{filtered_elbow_angle:.1f}", (elbow_x_coord + 20, elbow_y_coord - 15), YELLOW, 0.9, 2) #Display the angle SLIGHTLY ABOVE AND RIGHT OF THE ELBOW JOINT
 
-                    # REP LOGIC
+                    #PUSHUP REP LOGIC
                     if filtered_elbow_angle is not None: 
                     
                         if filtered_elbow_angle <= DOWN_ANGLE:
@@ -371,7 +367,16 @@ def main():
             elapsed_str = get_total_time(start_time)
             draw_text(frame, f"Time: {elapsed_str}", (w - 220, 90), WHITE, 1.2, 2)
 
-            # Only display specific joint angles if they exist and someone is actively tracked
+
+
+
+
+
+
+
+
+
+            #DISPLAY VALUES. MESS WITH THE SETTINGS TO MAKE AESTHESTICS
             if results.pose_landmarks and arm_visible(landmarks, side):
                 if filtered_elbow_angle is not None:
                     draw_text(frame, f"Elbow: {filtered_elbow_angle:.1f} deg", (25, 225), TORQOISE_BLUE, 1.3, 1)
