@@ -182,8 +182,8 @@ def draw_active_side(frame, landmarks, side):
 
     #CHEST
     chest_point = get_chest(frame,landmarks)
-    cv2.circle(frame, chest_point, 12, (0, 0, 255), -1)
-
+    cv2.circle(frame, chest_point, 7, (255, 255, 255), -1)
+    cv2.line(frame, chest_point,points["shoulder"],(100,100,100),5,cv2.LINE_AA)
     # TORSO
     if landmarks[landmarks_dict["hip"]].visibility >= BODY_VISIBILITY and landmarks[landmarks_dict["shoulder"]].visibility >= BODY_VISIBILITY:
         cv2.line(frame, points["shoulder"], points["hip"], (0, 255, 255), 5, cv2.LINE_AA) #Draw a line from shoulder to points
