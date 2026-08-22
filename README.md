@@ -45,3 +45,8 @@ Our first demo will focus on a reliable core interaction:
 
 Extra features such as zooming, graphs, colours, shapes, and handwriting
 recognition can be added after the basic drawing experience works smoothly.
+
+
+
+What do we do? 
+Our software allows an automated counter, timer, and analysis tool for your workout! Features such as an incorrect form alert system, ensures injury prevention. 
