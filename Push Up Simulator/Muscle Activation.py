@@ -2,11 +2,11 @@ import cv2
 import mediapipe as mp
 import numpy as np
 from collections import deque
+import time
+from pathlib import Path
 
 
-# Features from different files
 from countdown import run_countdown
-from audio_beep import play_beep
 
 #Some parameters
 CAM_WIDTH = 1280
@@ -22,6 +22,7 @@ DOWN_CONFIRM_FRAMES = 3
 UP_CONFIRM_FRAMES = 3
 
 ANGLE_HISTORY_SIZE = 3
+PEACE_CONFIRM_FRAMES = 8
 
 BODY_ALIGNMENT_MTN = 130
 ALIGNMENT_VISIBILITY = 0.30
@@ -40,11 +41,19 @@ LEG_COLOR = (255, 180, 0)
 #Mediapipe setting
 mp_pose = mp.solutions.pose
 mp_draw = mp.solutions.drawing_utils
+mp_hands = mp.solutions.hands
+
 
 #Pose setting
 pose = mp_pose.Pose(
     static_image_mode=False, model_complexity=1, smooth_landmarks=True,
     min_detection_confidence=0.45, min_tracking_confidence=0.45
+)
+
+hands = mp_hands.Hands(
+    max_num_hands=1, 
+    min_detection_confidence=0.9, 
+    min_tracking_confidence=0.6
 )
 
 #Landmark indices for left and right body parts
@@ -241,6 +250,31 @@ def elbow_flexion_angle(frame, landmarks ,side):
                     2,
                     (100,100,100),
                     5)
+
+def previous_rep_file():
+    return Path(__file__).with_name("previous_rep.txt")
+
+def load_previous_rep():
+    try:
+        with open(previous_rep_file(), "r") as file:
+            return int(file.read().strip())
+    except (FileNotFoundError, ValueError):
+        return 0
+
+def save_previous_rep(reps):
+    with open(previous_rep_file(), "w") as file:
+        file.write(str(reps))
+
+def is_peace_sign(hand_landmarks):
+    specific_hand_landmarks = hand_landmarks.landmark
+    index_up = specific_hand_landmarks[8].y < specific_hand_landmarks[6].y  #Higher up goes less if you know what I mean
+    middle_up = specific_hand_landmarks[12].y < specific_hand_landmarks[10].y
+    ring_down = specific_hand_landmarks[16].y > specific_hand_landmarks[14].y
+    pinky_down = specific_hand_landmarks[20].y > specific_hand_landmarks[18].y
+    return index_up and middle_up and ring_down and pinky_down 
+
+
+
 def main():
     cap = cv2.VideoCapture(0)   
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, CAM_WIDTH) #Defne the width and height of camera frame
@@ -281,8 +315,11 @@ def main():
             rgb.flags.writeable = True
 
             # POSE DETECTED
+
+            peace_detected = False
             if results.pose_landmarks:
                 landmarks = results.pose_landmarks.landmark
+                
 
                 # ALWAYS DRAW THE FULL MEDIAPIPE SKELETON
                 # This lets you immediately see whether MediaPipe itself is detecting your body.
@@ -343,7 +380,6 @@ def main():
                                 bottom_reached = False
                                 up_frames = 0
                                 print(f"Push-up completed! Total: {reps}")
-                                play_beep() # Play beep sound when a push-up is completed
                         else:
                             up_frames = 0
 
