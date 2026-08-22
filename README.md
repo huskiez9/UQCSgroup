@@ -21,11 +21,6 @@ Make personal exercise tracking more accessible, functional and safer. Our softw
 
 ## How it works
 
-The app uses a webcam and hand tracking to identify the presenter’s hand and
-gesture position. When the drawing gesture is active, the app maps the hand’s
-position to a digital canvas and creates a stroke. Releasing the gesture ends
-the current stroke.
-
 The application uses MediaPipe Pose to identify important body features, including the shoulder, elbow, wrist, hip, knee, ankle and heel. It then uses these coordinates to calculate the user's elbow and body angles. When the elbow bends past the set down threshold, the program recognises the bottom/full extension of an exercise. When the arm is straightened again, it counts one completed repetition. The position must be detected across multiple frames which helps prevent camera noise from creating false repetitions. The program also compares the positions of the shoulder, hip and heel to give the user immediate alignment feedback needed for most workouts. 
 
 ## Controls
