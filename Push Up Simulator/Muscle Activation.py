@@ -305,10 +305,6 @@ def main():
                 left_score = arm_visibility_score(landmarks, "left")
                 right_score = arm_visibility_score(landmarks, "right")
 
-                #Code for displaying         
-                draw_text(frame, f"Side: {side.upper()}", (25, 35), GREEN, 0.6, 2) #Displays side which is drawn by media pipe
-                draw_text(frame, f"L_visibility: {left_score:.2f}", (25, 65), WHITE, 0.5, 1)
-                draw_text(frame, f"R_visibility: {right_score:.2f}", (25, 90), WHITE, 0.5, 1)
 
                 # ARM AVAILABLE
                 if arm_visible(landmarks, side):
@@ -356,40 +352,40 @@ def main():
                             up_frames = 0
 
                     # DISPLAY INFORMATION
-                    draw_text(frame, f"REPS: {reps}", (25, 145), GREEN, 1.25, 3)
+                    draw_text(frame, f"REPS: {reps}", (25, 145), GREEN, 4.5, 3)
 
                     beep_status_colour = GREEN if beep_enabled else RED
                     draw_text(frame, f"Beep: {'ON' if beep_enabled else 'OFF'} (B to toggle)",
-                              (25, 350), beep_status_colour, 0.6, 1)
+                              (25, 350), beep_status_colour, 2.5, 1)
 
                     stage_color = GREEN if stage == "UP" else ORANGE
-                    draw_text(frame, f"STAGE: {stage}", (25, 185), stage_color, 0.7, 2)
+                    draw_text(frame, f"STAGE: {stage}", (25, 185), stage_color, 4, 2)
 
-                    if filtered_elbow_angle is not None:
-                        draw_text(frame, f"Elbow: {filtered_elbow_angle:.1f}", (25, 225), WHITE, 0.6, 1)
+                    #if filtered_elbow_angle is not None:
+                        #draw_text(frame, f"Elbow: {filtered_elbow_angle:.1f}", (25, 225), WHITE, 0.6, 1)
 
-                    if hip_angle is not None:
-                        hip_color = GREEN if hip_angle >= 160 else RED
-                        draw_text(frame, f"Hip: {hip_angle:.1f}", (25, 255), hip_color, 0.6, 1)
-                    else:
-                        draw_text(frame, "Hip not visible", (25, 255), ORANGE, 0.55, 1)
+                    #if hip_angle is not None:
+                        #hip_color = GREEN if hip_angle >= 160 else RED
+                        #draw_text(frame, f"Hip: {hip_angle:.1f}", (25, 255), hip_color, 0.6, 1)
+                    #else:
+                        #draw_text(frame, "Hip not visible", (25, 255), ORANGE, 0.55, 1)
 
-                    if knee_angle is not None:
-                        knee_color = GREEN if knee_angle >= 160 else ORANGE
-                        draw_text(frame, f"Knee: {knee_angle:.2f}", (25, 285), knee_color, 0.6, 1)
-                    else:
-                        draw_text(frame, "Knee not visible!", (25, 285), ORANGE, 0.55, 1)
+                    #if knee_angle is not None:
+                        #knee_color = GREEN if knee_angle >= 160 else ORANGE
+                        #draw_text(frame, f"Knee: {knee_angle:.2f}", (25, 285), knee_color, 0.6, 1)
+                    #else:
+                        #draw_text(frame, "Knee not visible!", (25, 285), ORANGE, 0.55, 1)
 
                 # BODY FOUND BUT ARM NOT RELIABLE
                 else:
                     elbow_history.clear()
-                    draw_text(frame, "BODY FOUND - SHOW ARM TO CAMERA", (25, h - 35), RED, 0.7, 2)
+                    #draw_text(frame, "BODY FOUND - SHOW ARM TO CAMERA", (25, h - 35), RED, 0.7, 2)
 
             else:
                 elbow_history.clear()
                 hip_history.clear()
                 knee_history.clear()
-                draw_text(frame, "NO PERSON DETECTED", (25, h - 35), RED, 0.8, 2)
+                draw_text(frame, "NO PERSON DETECTED", (25, h - 35), RED, 3, 2)
 
             # DISPLAY CALORIES
             calorie_tracker(frame, reps)
