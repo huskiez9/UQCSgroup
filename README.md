@@ -1,30 +1,23 @@
-# Airscript
+# ______
 
-An educational visual-recognition project built by our hackathon team. It lets
-a presenter write and draw in the air while a computer displays their work as
-a live digital whiteboard.
-
-The experience is inspired by teaching videos where an instructor can be seen
-alongside their handwritten maths, diagrams, and explanations—except the
-whiteboard is virtual. The presenter uses hand gestures in front of a camera,
-and the audience sees both the presenter and the writing on screen.
+An interactive computer vision fitness project built by our hackathon team. Our software uses a webcam to automatically count reps, monitor the user's movement based on body part angles, and provide live analysis feedback. 
+The project ensures good form by only allowing a full extension and flexion motion with the elbow. The tracker makes workouts easier for users to follow without wearing a physical device or using specialised gym equipment. The user simply positions themselves in front of a camera and begins exercising while their repetitions, calories and movement stage is displayed on the screen.  
 
 ## Vision
 
-Make classroom explanations more natural, expressive, and interactive. A
-teacher should be able to explain a concept by writing equations, sketching
-diagrams, and highlighting ideas without needing to stand in front of a
-physical whiteboard or tablet.
+Make personal exercise tracking more accessible, functional and safer. Our software combines a repetition counter, workout timer and a movement analysis tool into one. The elbow angles allow for incorrect form to not be counted allowing for users to recognise bad technique, reducing the risk of injury.  
 
-## Planned features
 
-- **Air writing:** write letters, numbers, and equations using hand gestures.
-- **Air drawing:** sketch lines, shapes, diagrams, and annotations.
-- **Eraser:** remove selected strokes or clear the board.
-- **Zoom controls:** zoom in and out of the virtual whiteboard.
-- **Graphs and visual aids:** display simple graphs and other teaching visuals.
-- **Live presenter view:** show the presenter’s camera feed together with the
-  virtual whiteboard content.
+## Features
+
+- **Automatic rep counting:** Increases a counter when the user completes a full range of motion exercise
+- **Form Analysis**: Checks elbow angle and shoulder to heel alignment 
+- **Live Visual Feedback:** Displays body part angles and movement stages while the exercise is being completed.
+- **Audio Feedback:** Plays a beep after each successful repetition.
+- **Workout Controls:** Allows the user to reset, save or quit the session with keyboard controls. 
+- **Session Records:**  Saves completed workout records into a database with a date and time. 
+- **Workout Timer:** Tracks the total workout time the user has been exercising for.
+
 
 ## How it works
 
@@ -33,20 +26,39 @@ gesture position. When the drawing gesture is active, the app maps the hand’s
 position to a digital canvas and creates a stroke. Releasing the gesture ends
 the current stroke.
 
+The application uses MediaPipe Pose to identify important body features, including the shoulder, elbow, wrist, hip, knee, ankle and heel. It then uses these coordinates to calculate the user's elbow and body angles. When the elbow bends past the set down threshold, the program recognises the bottom/full extension of an exercise. When the arm is straightened again, it counts one completed repetition. The position must be detected across multiple frames which helps prevent camera noise from creating false repetitions. The program also compares the positions of the shoulder, hip and heel to give the user immediate alignment feedback needed for most workouts. 
+
+## Controls
+
+R — reset the repetition counter.
+
+S — saves the current workout.
+
+B — turn the completion beep sound on or off.
+
+Q — closes the application.
+
 ## Hackathon scope
 
 Our first demo will focus on a reliable core interaction:
 
-1. Open the webcam and detect a hand.
-2. Use a pinch or similar gesture to start and stop drawing.
-3. Draw the hand movement onto an on-screen canvas.
-4. Provide a clear/erase control.
-5. Show the presenter and the virtual whiteboard together.
+1. Open the webcam and detect the user's pose.
+2. Select and position the body into the most visible side. 
+3. Calculate elbow and body alignment angles.
+4. Recognise the down and up / extension and flexion stages of a workout.
+5. Count completed repetitions and provide immediate results.
+6. Save the user's workout result if wanted.
 
-Extra features such as zooming, graphs, colours, shapes, and handwriting
-recognition can be added after the basic drawing experience works smoothly.
+Future versions could support additional exercises, workout goals, set and rest tracking, progress graphs, voice feedback, and personalised form thresholds.
+
+## Technology Used
+
+- Python
+
+- OpenCV
+
+- MediaPipe Pose
+
+- NumPy
 
 
-
-What do we do? 
-Our software allows an automated counter, timer, and analysis tool for your workout! Features such as an incorrect form alert system, ensures injury prevention. 
