@@ -9,7 +9,7 @@ from countdown import run_countdown
 from audio_beep import play_beep
 from stopwatch import start_timer, get_total_time
 from six_seven import check_and_trigger, draw_if_active
-
+from Summary import summary_screen
 #Some parameters
 CAM_WIDTH = 1280
 CAM_HEIGHT = 720
@@ -252,7 +252,6 @@ def calorie_tracker(frame, reps):
 
 
 
-
 def main():
     cap = cv2.VideoCapture(0)   
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, CAM_WIDTH) #Defne the width and height of camera frame
@@ -442,6 +441,11 @@ def main():
                 beep_enabled = not beep_enabled
                 status = "enabled" if beep_enabled else "disabled"
                 print(f"[INFO] Beep sound is: {status}")
+            elif key == ord("e"): #E  = end session
+                final_calories_burned = reps * CALORIES_PER_REP
+                cap.release()
+                cv2.destroyWindow("Side Push-Up Tracker")
+                summary_screen(frame, reps, final_calories_burned, passed_time_sec )
 
             elif key == ord("1"):
                 target_reps = 5
