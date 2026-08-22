@@ -309,6 +309,9 @@ def main():
     down_frames = 0
     up_frames = 0
     beep_enabled = True  # Have the option to enable/disable the beep sound for user preference
+    previous_rep = load_previous_rep()
+    peace_frames = 0
+    peace_latched = False
 
     if not run_countdown(cap, seconds=5): #Run countdown before starting the pushup tracker
         cap.release()
@@ -339,10 +342,7 @@ def main():
                 landmarks = results.pose_landmarks.landmark
                 
 
-                # ALWAYS DRAW THE FULL MEDIAPIPE SKELETON
-                # This lets you immediately see whether MediaPipe itself is detecting your body.
-                mp_draw.draw_landmarks(
-                    frame, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
+                mp_draw.draw_landmarks(frame, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
                     mp_draw.DrawingSpec(color=(100, 100, 100), thickness=2, circle_radius=2),
                     mp_draw.DrawingSpec(color=(80, 80, 80), thickness=2, circle_radius=2))
 
