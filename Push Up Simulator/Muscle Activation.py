@@ -3,6 +3,7 @@ import mediapipe as mp
 import numpy as np
 from collections import deque
 
+
 # Features from different files
 from countdown import run_countdown
 
@@ -79,7 +80,7 @@ def check_alignment(frame, landmarks, side):
     shoulder_raw_coord = landmarks[ids["shoulder"]]
     hip_raw_coord = landmarks[ids["hip"]]
     heel_raw_coord = landmarks[ids["heel"]]
-    if (shoulder_raw_coord.visibility < ALIGNMENT_VISIBILITY and  hip_raw_coord.visibility < ALIGNMENT_VISIBILITY and heel_raw_coord.visibility < ALIGNMENT_VISIBILITY):
+    if (shoulder_raw_coord.visibility < ALIGNMENT_VISIBILITY or  hip_raw_coord.visibility < ALIGNMENT_VISIBILITY or heel_raw_coord.visibility < ALIGNMENT_VISIBILITY):
         draw_text(frame, "PUSHUP ALIGNMENT NOT VISIBLE", (25, 325), ORANGE, 0.7, 2)
     body_angle = calculate_angle(get_point(shoulder_raw_coord), get_point(hip_raw_coord), get_point(heel_raw_coord))
     alignment_correct = (body_angle >= BODY_ALIGNMENT_MTN)
