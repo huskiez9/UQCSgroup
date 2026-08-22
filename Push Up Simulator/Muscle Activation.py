@@ -135,46 +135,7 @@ def arm_visible(landmarks, side):
     wrist = landmarks[ids["wrist"]]
     return (shoulder.visibility >= ARM_VISIBILITY and elbow.visibility >= ARM_VISIBILITY and wrist.visibility >= ARM_VISIBILITY)
 
-def is_full_body_visible(landmarks):
 
-    # Take whichever side MediaPipe can see better
-    head = max(
-        landmarks[7].visibility,
-        landmarks[8].visibility
-    )
-
-    shoulder = max(
-        landmarks[11].visibility,
-        landmarks[12].visibility
-    )
-
-    hip = max(
-        landmarks[23].visibility,
-        landmarks[24].visibility
-    )
-
-    knee = max(
-        landmarks[25].visibility,
-        landmarks[26].visibility
-    )
-
-    heel = max(
-        landmarks[29].visibility,
-        landmarks[30].visibility
-    )
-
-    return (
-        head >= BODY_VISIBILITY
-        and shoulder >= BODY_VISIBILITY
-        and hip >= BODY_VISIBILITY
-        and knee >= BODY_VISIBILITY
-        and heel >= BODY_VISIBILITY
-    )
-
-
-
-
-    
 def get_elbow_angle(landmarks, side):
     ids = BODY[side]
     shoulder = get_point(landmarks[ids["shoulder"]])
@@ -355,36 +316,29 @@ def main():
                         draw_text(frame, f"{filtered_elbow_angle:.1f}", (elbow_x_coord + 20, elbow_y_coord - 15), YELLOW, 0.9, 2) #Display the angle SLIGHTLY ABOVE AND RIGHT OF THE ELBOW JOINT
 
                     # REP LOGIC
-                    if is_full_body_visible(landmarks):
-                        draw_text(frame, "FULL BODY READY", (25, 115), GREEN, 0.6, 2)
-
-                        if filtered_elbow_angle is not None: 
-                            if filtered_elbow_angle <= DOWN_ANGLE:
-                                down_frames += 1 #I guess 3 frames is enough...
-                                if down_frames >= DOWN_CONFIRM_FRAMES:  
-                                    stage = "DOWN"
-                                    bottom_reached = True
-                                    down_frames = 0
-                                else:
-                                    down_frames = 0 #Set down_frames to 0 if elbow_angle is not below down_angle   
+                    if filtered_elbow_angle is not None: 
+                        if filtered_elbow_angle <= DOWN_ANGLE:
+                            down_frames += 1 #I guess 3 frames is enough...
+                            if down_frames >= DOWN_CONFIRM_FRAMES:  
+                                stage = "DOWN"
+                                bottom_reached = True
+                                down_frames = 0
+                            else:
+                                down_frames = 0 #Set down_frames to 0 if elbow_angle is not below down_angle   
 
                         # RETURN TO TOP
-                                if filtered_elbow_angle >= UP_ANGLE and bottom_reached: 
-                                    up_frames += 1
-                                    if up_frames >= UP_CONFIRM_FRAMES:
-                                        reps += 1
-                                        stage = "UP"
-                                        bottom_reached = False
-                                        up_frames = 0
-                                        print(f"Push-up completed! Total: {reps}")
-                                        if beep_enabled:
-                                            play_beep()  # Play the beep sound in a separate thread to avoid blocking the main loop
-                                else:
+                            if filtered_elbow_angle >= UP_ANGLE and bottom_reached: 
+                                up_frames += 1
+                                if up_frames >= UP_CONFIRM_FRAMES:
+                                    reps += 1
+                                    stage = "UP"
+                                    bottom_reached = False
                                     up_frames = 0
-                        else:
-                            draw_text(frame, "SHOW: HEAD, SHOULDER, BACK, KNEES, HEELS", (25, h - 65), ORANGE, 0.7, 2)
-                            down_frames = 0
-                            up_frames = 0
+                                    print(f"Push-up completed! Total: {reps}")
+                                    if beep_enabled:
+                                        play_beep()  # Play the beep sound in a separate thread to avoid blocking the main loop
+                            else:
+                                 up_frames = 0
 
                     # DISPLAY INFORMATION
                     beep_status_colour = GREEN if beep_enabled else RED
