@@ -63,7 +63,6 @@ hip_history = deque(maxlen=ANGLE_HISTORY_SIZE)
 knee_history = deque(maxlen=ANGLE_HISTORY_SIZE)
 
 
-
 def calculate_angle(point_a, point_b, point_c):
     ba_x = point_a[0] - point_b[0]
     ba_y = point_a[1] - point_b[1]
@@ -296,8 +295,6 @@ def main():
 
                 #Code for displaying         
                 draw_text(frame, f"Side: {side.upper()}", (25, 35), GREEN, 0.6, 2) #Displays side which is drawn by media pipe
-                draw_text(frame, f"L_visibility: {left_score:.2f}", (25, 65), WHITE, 0.5, 1)
-                draw_text(frame, f"R_visibility: {right_score:.2f}", (25, 90), WHITE, 0.5, 1)
 
                 # ARM AVAILABLE
                 if arm_visible(landmarks, side):
