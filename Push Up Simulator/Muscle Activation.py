@@ -339,6 +339,8 @@ def main():
                                 bottom_reached = False
                                 up_frames = 0
                                 print(f"Push-up completed! Total: {reps}")
+                                if beep_enabled:
+                                    play_beep()  # Play a beep sound (after every pushup) in a separate thread to avoid blocking the main loop
                         else:
                             up_frames = 0
 
