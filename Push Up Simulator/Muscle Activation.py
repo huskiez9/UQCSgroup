@@ -9,7 +9,13 @@ from countdown import run_countdown
 from audio_beep import play_beep
 from stopwatch import start_timer, get_total_time
 from six_seven import check_and_trigger, draw_if_active
+<<<<<<< Updated upstream
 from Summary import summary_screen
+=======
+
+from motivation import check_milestones, check_target, draw_if_active as draw_motivation, reset as reset_motivation
+
+>>>>>>> Stashed changes
 #Some parameters
 CAM_WIDTH = 1280
 CAM_HEIGHT = 720
@@ -363,6 +369,8 @@ def main():
                                     play_beep()
                                 # Check if the reps reached '67' reps and trigger the animation
                                 check_and_trigger(reps)
+                                check_milestones(reps)
+                                check_target(reps, target_reps)
                         else:
                             up_frames = 0
 
@@ -415,7 +423,8 @@ def main():
             calorie_tracker(frame, reps)
 
             # to draw the call so it actually renders
-            draw_if_active(frame)
+            draw_if_active(frame) ## for 67 call
+            draw_motivation(frame) ## for milestones and target call (10 reps increments)
 
             # DISPLAY
             cv2.imshow("Side Push-Up Tracker", frame)
@@ -435,6 +444,12 @@ def main():
                 elbow_history.clear()
                 hip_history.clear()
                 knee_history.clear() 
+
+
+
+
+
+                reset_motivation()
                 print("[INFO] Counter reset")
 
             elif key == ord("b"): # B = toggle beep sound on/off
