@@ -5,8 +5,9 @@ from collections import deque
 import time
 from pathlib import Path
 
-
+# Different .py files we use to import functions from here
 from countdown import run_countdown
+from audio_beep import play_beep
 
 #Some parameters
 CAM_WIDTH = 1280
@@ -240,57 +241,6 @@ def draw_active_side(frame, landmarks, side):
 
     return points
 
-def elbow_flexion_angle(frame, landmarks, side):
-    height, width = frame.shape[:2]
-    elbow_angle = get_elbow_angle(landmarks, side)
-    if elbow_angle >= 160:
-        startattempt = True
-    
-        if startattempt == True:
-            
-            if elbow_angle < 160: 
-                if elbow_angle <= 90:
-                    end_rep = True
-                else:
-                    transition_rep  = True
-            else: 
-                invalidtext = "Invalid Rep!"
-
-
-        cv2.putText(frame,
-                    invalidtext,
-                    (width-500,height-500),
-                    cv2.FONT_HERSHEY_SIMPLEX,
-                    2,
-                    (255,255,255),
-                    4,
-                    cv2.LINE_AA)
-
-def previous_rep_file():
-    return Path(__file__).with_name("previous_rep.txt")
-
-
-def load_previous_rep():
-    try:
-        with open(previous_rep_file(), "r") as file:
-            return int(file.read().strip())
-    except (FileNotFoundError, ValueError):
-        return 0
-
-
-def save_previous_rep(reps):
-    with open(previous_rep_file(), "w") as file:
-        file.write(str(reps))
-
-
-def is_peace_sign(hand_landmarks):
-    specific_hand_landmarks = hand_landmarks.landmark
-    index_up = specific_hand_landmarks[8].y < specific_hand_landmarks[6].y  #Higher up goes less if you know what I me
-    middle_up = specific_hand_landmarks[12].y < specific_hand_landmarks[10].y
-    ring_down = specific_hand_landmarks[16].y > specific_hand_landmarks[14].y
-    pinky_down = specific_hand_landmarks[20].y > specific_hand_landmarks[18].y
-    return index_up and middle_up and ring_down and pinky_down 
-
     
 def main():
     cap = cv2.VideoCapture(0)   
@@ -361,8 +311,6 @@ def main():
                 # ARM AVAILABLE
                 if arm_visible(landmarks, side):
 
-                    elbow_flexion_angle(frame, landmarks, side)
-
                     points = draw_active_side(frame, landmarks, side) 
 
                     # ELBOW ANGLE
@@ -400,9 +348,6 @@ def main():
                                 bottom_reached = False
                                 up_frames = 0
                                 print(f"Push-up completed! Total: {reps}")
-                                if beep_enabled:
-                                    # Play beep sound when a push-up is completed
-                                    play_beep()
                         else:
                             up_frames = 0
 
