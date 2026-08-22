@@ -135,6 +135,16 @@ def arm_visible(landmarks, side):
     wrist = landmarks[ids["wrist"]]
     return (shoulder.visibility >= ARM_VISIBILITY and elbow.visibility >= ARM_VISIBILITY and wrist.visibility >= ARM_VISIBILITY)
 
+def is_full_body_visible(landmarks, side):
+    ids = BODY[side]
+    head = landmarks[ids["ear"]].visibility
+    shoulder = landmarks[ids["shoulder"]].visibility
+    hip = landmarks[ids["hip"]].visibility
+    knee = landmarks[ids["knee"]].visibility
+    heel = landmarks[ids["heel"]].visibility
+    return (head >= BODY_VISIBILITY and shoulder >= BODY_VISIBILITY 
+            and hip >= BODY_VISIBILITY and knee >= BODY_VISIBILITY
+            and heel >= BODY_VISIBILITY)
 
 def get_elbow_angle(landmarks, side):
     ids = BODY[side]
@@ -316,29 +326,35 @@ def main():
                         draw_text(frame, f"{filtered_elbow_angle:.1f}", (elbow_x_coord + 20, elbow_y_coord - 15), YELLOW, 0.9, 2) #Display the angle SLIGHTLY ABOVE AND RIGHT OF THE ELBOW JOINT
 
                     # REP LOGIC
-                    if filtered_elbow_angle is not None: 
-                    
-                        if filtered_elbow_angle <= DOWN_ANGLE:
-                            down_frames += 1 #I guess 3 frames is enough...
-                            if down_frames >= DOWN_CONFIRM_FRAMES:  
-                                stage = "DOWN"
-                                bottom_reached = True
-                                down_frames = 0
-                        else:
-                            down_frames = 0 #Set down_frames to 0 if elbow_angle is not below down_angle   
+                    if is_full_body_visible(landmarks, side):
+                        draw_text(frame, "FULL BODY READY", (25, 115), GREEN, 0.6, 2)
+
+                        if filtered_elbow_angle is not None: 
+                            if filtered_elbow_angle <= DOWN_ANGLE:
+                                down_frames += 1 #I guess 3 frames is enough...
+                                if down_frames >= DOWN_CONFIRM_FRAMES:  
+                                    stage = "DOWN"
+                                    bottom_reached = True
+                                    down_frames = 0
+                                else:
+                                    down_frames = 0 #Set down_frames to 0 if elbow_angle is not below down_angle   
 
                         # RETURN TO TOP
-                        if filtered_elbow_angle >= UP_ANGLE and bottom_reached: 
-                            up_frames += 1
-                            if up_frames >= UP_CONFIRM_FRAMES:
-                                reps += 1
-                                stage = "UP"
-                                bottom_reached = False
-                                up_frames = 0
-                                print(f"Push-up completed! Total: {reps}")
-                                if beep_enabled:
-                                    play_beep()  # Play the beep sound in a separate thread to avoid blocking the main loop
+                                if filtered_elbow_angle >= UP_ANGLE and bottom_reached: 
+                                    up_frames += 1
+                                    if up_frames >= UP_CONFIRM_FRAMES:
+                                        reps += 1
+                                        stage = "UP"
+                                        bottom_reached = False
+                                        up_frames = 0
+                                        print(f"Push-up completed! Total: {reps}")
+                                        if beep_enabled:
+                                            play_beep()  # Play the beep sound in a separate thread to avoid blocking the main loop
+                                else:
+                                    up_frames = 0
                         else:
+                            draw_text(frame, "SHOW: HEAD, SHOULDER, BACK, KNEES, HEELS", (25, h - 65), ORANGE, 0.7, 2)
+                            down_frames = 0
                             up_frames = 0
 
                     # DISPLAY INFORMATION
