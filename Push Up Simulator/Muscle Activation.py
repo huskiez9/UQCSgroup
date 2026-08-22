@@ -124,7 +124,6 @@ def get_body_angles(landmarks, side):
     hip_lm = landmarks[ids["hip"]]
     knee_lm = landmarks[ids["knee"]]
     ankle_lm = landmarks[ids["ankle"]]
-
     hip_angle = None
     knee_angle = None
 
@@ -205,7 +204,16 @@ def draw_active_side(frame, landmarks, side):
 
     return points
 
-
+def elbow_flexion_angle(frame, landmarks ,side):
+    elbow_angle = get_elbow_angle(landmarks)
+    if elbow_angle < 70 or elbow_angle > 180:
+        invalid_rep_text = 'Invalid Rep! Flexion Angle not right!'
+        cv2.putText(frame,
+                    invalid_rep_text,
+                    (0,5),
+                    2,
+                    (100,100,100),
+                    5)
 def main():
     cap = cv2.VideoCapture(0)   
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, CAM_WIDTH) #Defne the width and height of camera frame
