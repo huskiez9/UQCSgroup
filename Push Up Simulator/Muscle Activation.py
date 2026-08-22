@@ -5,6 +5,7 @@ from collections import deque
 
 # Features from different files
 from countdown import run_countdown
+from audio_beep import play_beep
 
 #Some parameters
 CAM_WIDTH = 1280
