@@ -443,8 +443,6 @@ def main():
 
 
 
-
-
                 reset_motivation()
                 print("[INFO] Counter reset")
 
