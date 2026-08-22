@@ -283,8 +283,8 @@ def main():
     try:
         while cap.isOpened(): #While camera is opened, read the camera frame and process it
 
-            current_time = time.monotonic #current measured time
-            passed_time_sec = int(current_time) - int(start_time) #elapsed time
+            current_time = time.monotonic() #current measured time
+            passed_time_sec = current_time - start_time #elapsed time
 
             camera_read_successfully, frame = cap.read() 
             if not camera_read_successfully:
