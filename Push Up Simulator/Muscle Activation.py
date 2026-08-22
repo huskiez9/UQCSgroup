@@ -223,7 +223,7 @@ def main():
     down_frames = 0
     up_frames = 0
 
-    if not run_countdown(cap, seconds=5): #Run countdown before starting the pushup tracker
+    if not run_countdown(cap, seconds=10): #Run countdown before starting the pushup tracker
         cap.release()
         cv2.destroyAllWindows()
         return
