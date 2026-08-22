@@ -42,6 +42,6 @@ def summary_screen (frame, reps, final_calories_burned, passed_time_sec):
     draw_text(summary_frame, str(passed_time_sec), (0, 300), YELLOW, 2, 2)
     while True:
         cv2.imshow("Session Summary", summary_frame)
-        if summary_key == ord("q"):
-            break
         summary_key = cv2.waitKey(1) & 0xFF
+        if summary_key == ord("q"):
+                    break
