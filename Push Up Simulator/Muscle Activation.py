@@ -17,18 +17,18 @@ from motivation import check_milestones, check_target, draw_if_active as draw_mo
 #Some parameters
 CAM_WIDTH = 1280
 CAM_HEIGHT = 720
-CALORIES_PER_REP = 0.3
+CALORIES_PER_REP = 0.4
 WEIGHT_KG = 70
 ACTIVITY_MET_MOD = 3.8
 DOWN_ANGLE = 95.5
 UP_ANGLE = 145 
 ARM_VISIBILITY = 0.30 
 BODY_VISIBILITY = 0.20   
-DOWN_CONFIRM_FRAMES = 2
-UP_CONFIRM_FRAMES = 2
+DOWN_CONFIRM_FRAMES = 3
+UP_CONFIRM_FRAMES = 3
 ANGLE_HISTORY_SIZE = 3
 PEACE_CONFIRM_FRAMES = 8
-BODY_ALIGNMENT_TOLERANT_ANGLE = 130
+BODY_ALIGNMENT_TOLERANT_ANGLE = 150
 ALIGNMENT_VISIBILITY = 0.30
 
 #COLOUR HEX CODES FOR EASIER REFERENCES
@@ -362,7 +362,7 @@ def main():
             draw_text(frame, f"Beep: {'ON' if beep_enabled else 'OFF'} (B to toggle)", (40, 650), beep_status_colour, 2.5, 1)
 
             stage_color = GREEN if stage == "UP" else ORANGE
-            draw_text(frame, f"STAGE: {stage}", (40, 180), stage_color, 4, 2)
+            draw_text(frame, f"POSITION: {stage}", (40, 180), stage_color, 4, 2)
 
             elapsed_str = get_total_time(start_time)
             draw_text(frame, f"Time: {elapsed_str}", (w - 220, 90), WHITE, 1.2, 2)
