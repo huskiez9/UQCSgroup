@@ -2,18 +2,14 @@ import cv2
 import mediapipe as mp
 import numpy as np
 from collections import deque
-import datetime
-import time
+
+
 
 # Different .py files we use to import functions from here
 from countdown import run_countdown
 from audio_beep import play_beep
 
 #Some parameters
-
-WEIGHT_KG = 70
-ACTIVITY_MET_MOD = 3.8 #For moderate calisthenics 
-
 CAM_WIDTH = 1280
 CAM_HEIGHT = 720
 
@@ -27,10 +23,10 @@ DOWN_CONFIRM_FRAMES = 2
 UP_CONFIRM_FRAMES = 2
 
 ANGLE_HISTORY_SIZE = 3
+PEACE_CONFIRM_FRAMES = 8
 
 BODY_ALIGNMENT_MTN = 130
 ALIGNMENT_VISIBILITY = 0.30
-
 
 
 WHITE = (255, 255, 255)
@@ -240,26 +236,12 @@ def draw_active_side(frame, landmarks, side):
 
     return points
 
-def calorie_tracker(frame, weight_kg, passed_time_sec, activity_met_mod):
-    height, width = frame.shape[:2]
-    passed_time_min = passed_time_sec/60
-    calories_burned = passed_time_min * (1/200) * 3.5 * activity_met_mod * weight_kg
-    cv2.putText(frame,
-                str(calories_burned),
-                (width-500,height-500),
-                2,
-                (100,100,100),
-                4,
-                cv2.LINE_AA)
-    return calories_burned
     
 def main():
     cap = cv2.VideoCapture(0)   
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, CAM_WIDTH) #Defne the width and height of camera frame
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, CAM_HEIGHT) #Define the width and height of camera frame
     cap.set(cv2.CAP_PROP_BUFFERSIZE, 1) #Define the buffer size of camera frame
-
-    start_time = time.monotonic() #Start time before camera opens
 
     if not cap.isOpened(): #If camera is not opened...
         print("Sorry, camera couldnt be opened!")
@@ -271,7 +253,6 @@ def main():
     bottom_reached = False
     down_frames = 0
     up_frames = 0
-    saved_reps = 0
     beep_enabled = True  # Have the option to enable/disable the beep sound for user preference
 
 
@@ -283,10 +264,6 @@ def main():
     try:
         while cap.isOpened(): #While camera is opened, read the camera frame and process it
             camera_read_successfully, frame = cap.read() 
-
-            current_time = time.monotonic #current measured time
-            passed_time_sec = int(current_time) - int(start_time) #elapsed time
-
             if not camera_read_successfully:
                 print("Sorry, camera frame couldnt be read!")
                 break
@@ -363,11 +340,13 @@ def main():
                                 up_frames = 0
                                 print(f"Push-up completed! Total: {reps}")
                                 if beep_enabled:
-                                    play_beep()  # Play the beep sound in a separate thread to avoid blocking the main loop
+                                    play_beep()  # Play a beep sound (after every pushup) in a separate thread to avoid blocking the main loop
                         else:
                             up_frames = 0
 
                     # DISPLAY INFORMATION
+                    draw_text(frame, f"REPS: {reps}", (25, 145), GREEN, 1.25, 3)
+
                     beep_status_colour = GREEN if beep_enabled else RED
                     draw_text(frame, f"Beep: {'ON' if beep_enabled else 'OFF'} (B to toggle)",
                               (25, 350), beep_status_colour, 0.6, 1)
@@ -401,10 +380,6 @@ def main():
                 knee_history.clear()
                 draw_text(frame, "NO PERSON DETECTED", (25, h - 35), RED, 0.8, 2)
 
-            # Keep the counters visible even when the user's pose/arm is not detected.
-            draw_text(frame, f"REPS: {reps}", (25, 145), GREEN, 1.25, 3)
-            draw_text(frame, f"LAST SAVED: {saved_reps}", (CAM_WIDTH // 2 - 120, 40), YELLOW, 1.0, 2)
-
             # DISPLAY
             cv2.imshow("Side Push-Up Tracker", frame)
 
@@ -414,7 +389,7 @@ def main():
             if key == ord("q"):  # Q = quit
                 break
 
-            elif key in (ord("r"), ord("R")):  # R = reset counter and rep-tracking state
+            elif key == ord("r"):  #Reset counts, rep, stage default up, bottom reach false
                 reps = 0
                 stage = "UP"
                 bottom_reached = False
@@ -424,17 +399,7 @@ def main():
                 hip_history.clear()
                 knee_history.clear() 
                 print("[INFO] Counter reset")
-            elif key == ord("s"):
-                saved_reps = reps
-                timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                with open("pushup_documentation.txt", "a") as file:
-                    file.write(f"[{timestamp}] Push-ups completed: {saved_reps}\n")
-                reps = 0 
-                stage = "Up"
-                bottom_reached = False
-                down_frames = 0
-                up_frames = 0
-                
+
             elif key == ord("b"): # B = toggle beep sound on/off
                 beep_enabled = not beep_enabled
                 status = "enabled" if beep_enabled else "disabled"
