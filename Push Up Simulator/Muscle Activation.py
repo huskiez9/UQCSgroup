@@ -243,9 +243,9 @@ def main():
     script_directory = os.path.dirname(os.path.abspath(__file__)) #Find absolute location of music file
     song_path = os.path.join(script_directory, "workout_song.mp3")
     pygame.mixer.music.load(song_path) #Load Music
-    pygame.mixer.music.set_volume(0.5) #Set volume
+    set_volume_music = 0.1
+    pygame.mixer.music.set_volume(set_volume_music) #Set volume
     pygame.mixer.music.play(-1) #Make sure song loops infinitely!
-
     #Default values for reps, stage, bottom_reached, down_frames and up_frames
     reps = 0
     stage = "UP"
@@ -451,6 +451,12 @@ def main():
                 target_reps = 80
             elif key == ord("9"):
                 target_reps = 90
+            elif key == ord("w"):
+                    set_volume_music += 0.1
+                    pygame.mixer.music.set_volume(set_volume_music)
+            elif key == ord("s"):
+                    set_volume_music -= 0.1
+                    pygame.mixer.music.set_volume(set_volume_music)
         
     finally:
         pygame.mixer.music.stop()
