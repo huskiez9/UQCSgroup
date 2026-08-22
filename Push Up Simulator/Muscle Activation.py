@@ -240,41 +240,33 @@ def draw_active_side(frame, landmarks, side):
 
     return points
 
-def elbow_flexion_angle(frame, landmarks ,side):
-    elbow_angle = get_elbow_angle(landmarks)
-    if elbow_angle < 70 or elbow_angle > 180:
-        invalid_rep_text = 'Invalid Rep! Flexion Angle not right!'
+def elbow_flexion_angle(frame, landmarks, side):
+    height, width = frame.shape[:2]
+    elbow_angle = get_elbow_angle(landmarks, side)
+    if elbow_angle >= 160:
+        startattempt = True
+    
+        if startattempt == True:
+            
+            if elbow_angle < 160: 
+                if elbow_angle <= 90:
+                    end_rep = True
+                else:
+                    transition_rep  = True
+            else: 
+                invalidtext = "Invalid Rep!"
+
+
         cv2.putText(frame,
-                    invalid_rep_text,
-                    (0,5),
+                    invalidtext,
+                    (width-500,height-500),
+                    cv2.FONT_HERSHEY_SIMPLEX,
                     2,
-                    (100,100,100),
-                    5)
+                    (255,255,255),
+                    4,
+                    cv2.LINE_AA)
 
-def previous_rep_file():
-    return Path(__file__).with_name("previous_rep.txt")
-
-def load_previous_rep():
-    try:
-        with open(previous_rep_file(), "r") as file:
-            return int(file.read().strip())
-    except (FileNotFoundError, ValueError):
-        return 0
-
-def save_previous_rep(reps):
-    with open(previous_rep_file(), "w") as file:
-        file.write(str(reps))
-
-def is_peace_sign(hand_landmarks):
-    specific_hand_landmarks = hand_landmarks.landmark
-    index_up = specific_hand_landmarks[8].y < specific_hand_landmarks[6].y  #Higher up goes less if you know what I mean
-    middle_up = specific_hand_landmarks[12].y < specific_hand_landmarks[10].y
-    ring_down = specific_hand_landmarks[16].y > specific_hand_landmarks[14].y
-    pinky_down = specific_hand_landmarks[20].y > specific_hand_landmarks[18].y
-    return index_up and middle_up and ring_down and pinky_down 
-
-
-
+    
 def main():
     cap = cv2.VideoCapture(0)   
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, CAM_WIDTH) #Defne the width and height of camera frame
@@ -291,6 +283,7 @@ def main():
     bottom_reached = False
     down_frames = 0
     up_frames = 0
+    beep_enabled = True  # Have the option to enable/disable the beep sound for user preference
 
     if not run_countdown(cap, seconds=5): #Run countdown before starting the pushup tracker
         cap.release()
@@ -343,6 +336,8 @@ def main():
                 # ARM AVAILABLE
                 if arm_visible(landmarks, side):
 
+                    elbow_flexion_angle(frame, landmarks, side)
+
                     points = draw_active_side(frame, landmarks, side) 
 
                     # ELBOW ANGLE
@@ -380,11 +375,18 @@ def main():
                                 bottom_reached = False
                                 up_frames = 0
                                 print(f"Push-up completed! Total: {reps}")
+                                if beep_enabled:
+                                    # Play beep sound when a push-up is completed
+                                    play_beep()
                         else:
                             up_frames = 0
 
                     # DISPLAY INFORMATION
                     draw_text(frame, f"REPS: {reps}", (25, 145), GREEN, 1.25, 3)
+
+                    beep_status_colour = GREEN if beep_enabled else RED
+                    draw_text(frame, f"Beep: {'ON' if beep_enabled else 'OFF'} (B to toggle)",
+                              (25, 350), beep_status_colour, 0.6, 1)
 
                     stage_color = GREEN if stage == "UP" else ORANGE
                     draw_text(frame, f"STAGE: {stage}", (25, 185), stage_color, 0.7, 2)
@@ -434,6 +436,11 @@ def main():
                 hip_history.clear()
                 knee_history.clear() 
                 print("[INFO] Counter reset")
+
+            elif key == ord("b"): # B = toggle beep sound on/off
+                beep_enabled = not beep_enabled
+                status = "enabled" if beep_enabled else "disabled"
+                print(f"[INFO] Beep sound is: {status}")
 
     finally:
         cap.release()
