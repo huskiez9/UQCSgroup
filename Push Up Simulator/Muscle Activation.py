@@ -334,14 +334,13 @@ def main():
                                 up_frames = 0
                                 print(f"Push-up completed! Total: {reps}")
 
-                                event_start = time.perf_counter()
+
                                 if beep_enabled:
                                     play_beep()
                                 check_and_trigger(reps)
                                 check_milestones(reps)
                                 check_target(reps, target_reps)
-                                event_time = (time.perf_counter() - event_start) * 1000
-                                print(f"Rep event took: {event_time:.2f} ms")
+
                         else:
                             up_frames = 0
 
