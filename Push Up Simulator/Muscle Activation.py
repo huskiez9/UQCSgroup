@@ -327,18 +327,18 @@ def main():
                                 down_frames = 0 #Set down_frames to 0 if elbow_angle is not below down_angle   
 
                         # RETURN TO TOP
-                            if filtered_elbow_angle >= UP_ANGLE and bottom_reached: 
-                                up_frames += 1
-                                if up_frames >= UP_CONFIRM_FRAMES:
-                                    reps += 1
-                                    stage = "UP"
-                                    bottom_reached = False
-                                    up_frames = 0
-                                    print(f"Push-up completed! Total: {reps}")
-                                    if beep_enabled:
-                                        play_beep()  # Play the beep sound in a separate thread to avoid blocking the main loop
-                            else:
-                                 up_frames = 0
+                    if filtered_elbow_angle >= UP_ANGLE and bottom_reached: 
+                        up_frames += 1
+                        if up_frames >= UP_CONFIRM_FRAMES:
+                            reps += 1
+                            stage = "UP"
+                            bottom_reached = False
+                            up_frames = 0
+                            print(f"Push-up completed! Total: {reps}")
+                            if beep_enabled:
+                                play_beep()  # Play the beep sound in a separate thread to avoid blocking the main loop
+                        else:
+                            up_frames = 0
 
                     # DISPLAY INFORMATION
                     beep_status_colour = GREEN if beep_enabled else RED
