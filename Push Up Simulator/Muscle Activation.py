@@ -229,6 +229,11 @@ def calorie_tracker(frame, reps):
     draw_text(frame, calorie_text, (width - 220, 35), YELLOW, 1.2, 2)
     return calories_burned
 
+music_value = 10
+def change_music_vol(music_value):
+    set_volume_music = music_value/100
+    pygame.mixer.music.set_volume(set_volume_music) #Set volume
+
 def main():
     cap = cv2.VideoCapture(0)   
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, CAM_WIDTH) #Defne the width and height of camera frame
@@ -243,9 +248,9 @@ def main():
     script_directory = os.path.dirname(os.path.abspath(__file__)) #Find absolute location of music file
     song_path = os.path.join(script_directory, "workout_song.mp3")
     pygame.mixer.music.load(song_path) #Load Music
-    set_volume_music = 0.1
-    pygame.mixer.music.set_volume(set_volume_music) #Set volume
     pygame.mixer.music.play(-1) #Make sure song loops infinitely!
+    #cv2.createTrackbar("Volume", "Side Push-Up Tracker",10, 100, change_music_vol)
+
     #Default values for reps, stage, bottom_reached, down_frames and up_frames
     reps = 0
     stage = "UP"
@@ -376,21 +381,21 @@ def main():
             draw_text(frame, f"Time: {elapsed_str}", (w - 220, 90), WHITE, 1.2, 2)
 
             #DISPLAY VALUES.
-            if results.pose_landmarks and arm_visible(landmarks, side):
-                if filtered_elbow_angle is not None:
-                    draw_text(frame, f"Elbow: {filtered_elbow_angle:.1f} deg", (25, 225), TORQOISE_BLUE, 1.3, 1)
+            #if results.pose_landmarks and arm_visible(landmarks, side):
+                #if filtered_elbow_angle is not None:
+                    #draw_text(frame, f"Elbow: {filtered_elbow_angle:.1f} deg", (25, 225), TORQOISE_BLUE, 1.3, 1)
 
-                if hip_angle is not None:
-                    hip_color = GREEN if hip_angle >= 160 else RED
-                    draw_text(frame, f"Hip: {hip_angle:.1f}", (25, 255), hip_color, 1.3, 1)
-                else:
-                    draw_text(frame, "Hip not visible!", (25, 255), RED, 1.3, 1)
+                #if hip_angle is not None:
+                    #hip_color = GREEN if hip_angle >= 160 else RED
+                    #draw_text(frame, f"Hip: {hip_angle:.1f}", (25, 255), hip_color, 1.3, 1)
+                #else:
+                    #draw_text(frame, "Hip not visible!", (25, 255), RED, 1.3, 1)
 
-                if knee_angle is not None:
-                    knee_color = GREEN if knee_angle >= 160 else RED
-                    draw_text(frame, f"Knee: {knee_angle:.2f}", (25, 285), knee_color, 1.3, 1)
-                else:
-                    draw_text(frame, "Knee not visible!", (25, 285), RED, 1.3, 1)
+                #if knee_angle is not None:
+                    #knee_color = GREEN if knee_angle >= 160 else RED
+                    #draw_text(frame, f"Knee: {knee_angle:.2f}", (25, 285), knee_color, 1.3, 1)
+                #else:
+                    #draw_text(frame, "Knee not visible!", (25, 285), RED, 1.3, 1)
 
             # DISPLAY CALORIES
             calorie_tracker(frame, reps)

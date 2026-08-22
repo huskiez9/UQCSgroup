@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+from motivation import check_milestones, check_target, draw_if_active as draw_motivation, reset as reset_motivation
 
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 120)
@@ -58,6 +59,17 @@ def summary_screen(frame, reps, final_calories_burned, passed_time_sec):
         summary_key = cv2.waitKey(1) & 0xFF
         if summary_key == ord("q"):
             break
+        elif summary_key == ord("r"):
+                cv2.destroyWindow("Session Summary")
+                cv2.imshow("Side Push-Up Tracker", frame)
+                reps = 0
+                stage = "UP"
+                bottom_reached = False
+                down_frames = 0
+                up_frames = 0
+  
+                reset_motivation()
+                print("[INFO] Counter reset")
             
     # Clean up the window after exiting
     cv2.destroyWindow("Session Summary")
