@@ -1,47 +1,60 @@
 import cv2
 import numpy as np
-def draw_text(
-    frame,
-    text,
-    position,
-    color=(255, 255, 255),
-    scale=0.7,
-    thickness=2
-):
-    x, y = position
 
-    cv2.putText(
-        frame, text, (x, y),
-        cv2.FONT_HERSHEY_PLAIN,
-        scale, (0, 0, 0),
-        thickness + 3,
-        cv2.LINE_AA
-    )
-
-    cv2.putText(
-        frame, text, (x, y),
-        cv2.FONT_HERSHEY_PLAIN,
-        scale, color,
-        thickness,
-        cv2.LINE_AA
-    )
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 120)
 YELLOW = (0, 255, 255)
 ORANGE = (0, 165, 255)
 RED = (0, 0, 255)
 
-#Summary screen appears when you press e, and when you press q, then it quits summary screen 
+def draw_centered_text(frame, text, y, color=(255, 255, 255), scale=1.5, thickness=2):
+    """
+    Helper function to perfectly center text horizontally on the screen.
+    """
+    font = cv2.FONT_HERSHEY_PLAIN
 
-def summary_screen (frame, reps, final_calories_burned, passed_time_sec):
+    text_size = cv2.getTextSize(text, font, scale, thickness)[0]
+    
+    # Calculate the x coordinate to center the text
+    text_x = (frame.shape[1] - text_size[0]) // 2
+    
+    # Draw black outline
+    cv2.putText(frame, text, (text_x, y), font, scale, (0, 0, 0), thickness + 3, cv2.LINE_AA)
+    # Draw main text
+    cv2.putText(frame, text, (text_x, y), font, scale, color, thickness, cv2.LINE_AA)
+
+
+def summary_screen(frame, reps, final_calories_burned, passed_time_sec):
     height, width = frame.shape[:2]
-    summary_frame = np.full_like(frame, (198,225,245))
-    draw_text(summary_frame, "END OF SESSION", (0,0), WHITE, 5, 2)
-    draw_text(summary_frame, str(reps), (0, 100), YELLOW, 2, 2)
-    draw_text(summary_frame, str(final_calories_burned), (0, 200), YELLOW, 2, 2)
-    draw_text(summary_frame, str(passed_time_sec), (0, 300), YELLOW, 2, 2)
+    
+    blurred_frame = cv2.GaussianBlur(frame, (51, 51), 0)
+    dark_overlay = np.full_like(frame, (20, 20, 20)) # Dark gray overlay
+    summary_frame = cv2.addWeighted(blurred_frame, 0.4, dark_overlay, 0.6, 0)
+    
+    
+
+    minutes = int(passed_time_sec // 60)
+    seconds = int(passed_time_sec % 60)
+    time_string = f"{minutes:02d}:{seconds:02d}"
+    cal_string = f"{final_calories_burned:.1f} kcal"
+
+    # Draw Title
+    draw_centered_text(summary_frame, "WORKOUT SUMMARY", int(height * 0.20), WHITE, scale=4, thickness=4)
+    
+    # Draw Stats (spaced out vertically)
+    draw_centered_text(summary_frame, f"Total Reps: {reps}", int(height * 0.45), GREEN, scale=3, thickness=3)
+    draw_centered_text(summary_frame, f"Calories Burned: {cal_string}", int(height * 0.60), YELLOW, scale=3, thickness=3)
+    draw_centered_text(summary_frame, f"Time Elapsed: {time_string}", int(height * 0.75), ORANGE, scale=3, thickness=3)
+    
+    # Draw Quit Instruction at the bottom
+    draw_centered_text(summary_frame, "Press 'Q' to Exit", int(height * 0.95), (200, 200, 200), scale=1.5, thickness=2)
+
+    # Display Loop
     while True:
         cv2.imshow("Session Summary", summary_frame)
         summary_key = cv2.waitKey(1) & 0xFF
         if summary_key == ord("q"):
-                    break
+            break
+            
+    # Clean up the window after exiting
+    cv2.destroyWindow("Session Summary")
