@@ -7,6 +7,7 @@ import time
 
 from countdown import run_countdown
 from audio_beep import play_beep
+from stopwatch import start_timer, get_total_time
 
 #Some parameters
 CAM_WIDTH = 1280
@@ -275,7 +276,7 @@ def main():
         cv2.destroyAllWindows()
         return
     
-    start_time = time.monotonic()
+    start_time = start_timer()
 
     try:
         while cap.isOpened(): #While camera is opened, read the camera frame and process it
@@ -368,6 +369,9 @@ def main():
 
                     stage_color = GREEN if stage == "UP" else ORANGE
                     draw_text(frame, f"STAGE: {stage}", (40, 180), stage_color, 4, 2)
+
+                    elapsed_str = get_total_time(start_time)
+                    draw_text(frame, f"Time: {elapsed_str}", (w - 220, 90), WHITE, 1.2, 2)
 
                     if filtered_elbow_angle is not None:
                         draw_text(frame, f"Elbow: {filtered_elbow_angle:.1f}", (25, 225), WHITE, 0.6, 1)
