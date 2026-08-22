@@ -50,8 +50,8 @@ mp_draw = mp.solutions.drawing_utils
 #Pose setting
 pose = mp_pose.Pose(static_image_mode=False, model_complexity=1, smooth_landmarks=True, min_detection_confidence=0.45, min_tracking_confidence=0.45)
 
-#Landmark indices for left and right body parts
-BODY = {"left":  {"shoulder": 11, "elbow": 13, "wrist": 15, "hip": 23, "knee": 25, "ankle": 27, "ear": 7, "heel": 29}, "right": {"shoulder": 12, "elbow": 14, "wrist": 16, "hip": 24, "knee": 26, "ankle": 28, "ear": 8, "heel": 30}
+#Landmark indices for left and right body parts. THESE ARE THE POINTS TO BE DRAWN
+BODY = {"left":  {"shoulder": 11, "elbow": 13, "wrist": 15, "hip": 23, "knee": 25, "ankle": 27, "heel": 29}, "right": {"shoulder": 12, "elbow": 14, "wrist": 16, "hip": 24, "knee": 26, "ankle": 28, "heel": 30}
 }
 
 #Deque has "max" feature which could drop item, whereas list could not
@@ -354,9 +354,9 @@ def main():
 
             if target_reps is not None:
                 if reps >= target_reps:
-                    draw_text(frame, f"TARGET REP REACHED!",(w - 600, 150), GREEN, 1.5, 2)
+                    draw_text(frame, f"TARGET REP OF {target_reps} REACHED!",(w - 350, 150), GREEN, 1.5, 2)
                 else:
-                    draw_text(frame, f"TARGET: {target_reps}",(w - 300, 150), WHITE, 1.5, 2)
+                    draw_text(frame, f"TARGET: {target_reps}",(w - 225, 150), WHITE, 1.5, 2)
 
             beep_status_colour = GREEN if beep_enabled else RED
             draw_text(frame, f"Beep: {'ON' if beep_enabled else 'OFF'} (B to toggle)", (40, 650), beep_status_colour, 2.5, 1)
