@@ -30,7 +30,7 @@ DOWN_CONFIRM_FRAMES = 3
 UP_CONFIRM_FRAMES = 3
 ANGLE_HISTORY_SIZE = 3
 PEACE_CONFIRM_FRAMES = 8
-BODY_ALIGNMENT_TOLERANT_ANGLE = 150
+BODY_ALIGNMENT_THRESHOLD_ANGLE = 150
 ALIGNMENT_VISIBILITY = 0.30
 
 #COLOUR HEX CODES FOR EASIER REFERENCES
@@ -54,7 +54,7 @@ pose = mp_pose.Pose(static_image_mode=False, model_complexity=1, smooth_landmark
 
 #Landmark indices for left and right body parts. THESE ARE THE POINTS TO BE DRAWN
 BODY = {"left":  {"shoulder": 11, "elbow": 13, "wrist": 15, "hip": 23, "knee": 25, "ankle": 27, "heel": 29}, "right": {"shoulder": 12, "elbow": 14, "wrist": 16, "hip": 24, "knee": 26, "ankle": 28, "heel": 30}
-}
+        }
 
 #Deque has "max" feature which could drop item, whereas list could not
 elbow_history = deque(maxlen=ANGLE_HISTORY_SIZE)
@@ -84,21 +84,21 @@ def check_alignment(frame, landmarks, side):
     heel_raw_coord = landmarks[ids["heel"]]
     
     if (shoulder_raw_coord.visibility < ALIGNMENT_VISIBILITY or hip_raw_coord.visibility < ALIGNMENT_VISIBILITY or  heel_raw_coord.visibility < ALIGNMENT_VISIBILITY):
-        draw_text(frame, "ALIGNMENT NOT VISIBLE!", (25, 415), ORANGE, 2.5, 2)
+        draw_text(frame, "Alignment not visible!", (25, 415), ORANGE, 2.5, 2)
         return False 
     body_angle = calculate_angle(get_point(shoulder_raw_coord), get_point(hip_raw_coord), get_point(heel_raw_coord))
 
-    alignment_correct = (body_angle >= BODY_ALIGNMENT_TOLERANT_ANGLE)
+    alignment_correct = (body_angle >= BODY_ALIGNMENT_THRESHOLD_ANGLE)
     height, width = frame.shape[:2]
 
-    shoulder_pixel_coord = get_pixel(shoulder_raw_coord, width, height) #Convert to pixel cords
+    shoulder_pixel_coord = get_pixel(shoulder_raw_coord, width, height) #Convert from normalised coords to pixel coords
     heel_pixel_coord = get_pixel(heel_raw_coord, width, height)
     
     if alignment_correct:
         cv2.line(frame, shoulder_pixel_coord, heel_pixel_coord, GREEN, 6, cv2.LINE_AA)
-        draw_text(frame, "Alignment is perfect straight!", (25, 415), GREEN, 2.5, 2)
+        draw_text(frame, "Alignment straight!", (25, 415), GREEN, 2.5, 2)
     else:
-        draw_text(frame, "Alignment is not strict!", (25, 415), RED, 2.5, 2)
+        draw_text(frame, "Alignment isnt straight!", (25, 415), RED, 2.5, 2)
         
     shoulder_x, shoulder_y = shoulder_pixel_coord
     draw_text(frame, f"{body_angle:.1f}", (shoulder_x - 80, shoulder_y - 10), WHITE, 0.7)
@@ -110,14 +110,14 @@ def get_point(landmark):
 def get_pixel(landmark, width, height):
     return (int(landmark.x * width), int(landmark.y * height)) #Return the PIXEL COORDINATES of a LANDMARK as tuple
 
-def filter_angle(history, value): #Calculate the median of the angles to "filter out the noise", and filter out None values
+def filter_angle(history, value): 
     if value is None:
         return None
     history.append(value)
-    return float(np.median(history))
+    return float(np.median(history)) #Return median of angles in deque out of 3
 
 def arm_visibility_score(landmarks, side):
-    indice_list = BODY[side]
+    indice_list = BODY[side] #Retrieve shoulder, elbow, wrist coords depending on body orientation
     shoulder_visibility_score = landmarks[indice_list["shoulder"]].visibility
     elbow_visibility_score = landmarks[indice_list["elbow"]].visibility          
     wrist_visibility_score = landmarks[indice_list["wrist"]].visibility                              
@@ -160,7 +160,7 @@ def get_body_angles(landmarks, side):
         knee_angle = calculate_angle(get_point(hip_lm), get_point(knee_lm), get_point(ankle_lm))
     return (hip_angle, knee_angle)
 
-def get_chest(frame,landmarks):
+def get_chest(frame,landmarks): 
     height, width = frame.shape[:2]
     left_shoulder = get_point(landmarks[12])
     right_shoulder = get_point(landmarks[11])
@@ -452,7 +452,6 @@ def main():
                 target_reps = 80
             elif key == ord("9"):
                 target_reps = 90
-        
         
     finally:
         pygame.mixer.music.stop()

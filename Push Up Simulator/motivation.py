@@ -9,18 +9,13 @@ BANNER_DURATION = 2.5 # the number of seconds the text stays on the screen
 
 MILESTONE_PHRASES = [
     "Keep going sweetie!",
-    "You've got this!",
     "Nice work human!",
     "Stay strong!",
     "You've got this!",
-    "You're the best!", 
-    "Common you can do better than this...",
-    "60 to go!",
+    "You're the best!",
+    "2000 to go!",
     "That's the spirit!",
-    "67 to go!",
-    "These pushups go by fast..."
-
-
+    "67 to go!"
 ]
 
 TARGET_PHRASE = "You reached the target, stand proud, you are strong!"
