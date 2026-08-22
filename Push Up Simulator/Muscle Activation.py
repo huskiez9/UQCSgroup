@@ -5,6 +5,8 @@ import mediapipe as mp
 import numpy as np
 from collections import deque
 import time
+import pygame
+import os
 
 #Import specialised modules
 from countdown import run_countdown
@@ -237,6 +239,13 @@ def main():
         print("Sorry, camera couldnt be opened!")
         return
 
+    pygame.mixer.init()
+    script_directory = os.path.dirname(os.path.abspath(__file__)) #Find absolute location of music file
+    song_path = os.path.join(script_directory, "workout_song.mp3")
+    pygame.mixer.music.load(song_path) #Load Music
+    pygame.mixer.music.set_volume(0.5) #Set volume
+    pygame.mixer.music.play(-1) #Make sure song loops infinitely!
+
     #Default values for reps, stage, bottom_reached, down_frames and up_frames
     reps = 0
     stage = "UP"
@@ -455,6 +464,7 @@ def main():
         
         
     finally:
+        pygame.mixer.music.stop()
         cap.release()
         pose.close()
         cv2.destroyAllWindows()
