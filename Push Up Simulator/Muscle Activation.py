@@ -227,7 +227,7 @@ def calorie_tracker(frame, reps):
     height, width = frame.shape[:2]
     calories_burned = reps * BIG_MACS_PER_REP
     calorie_text = f"Calories: {calories_burned:.2f}% of a Big Mac"
-    draw_text(frame, calorie_text, (width - 200, 35), YELLOW, 1.2, 2)
+    draw_text(frame, calorie_text, (width - 300, 35), YELLOW, 1.2, 2)
     return calories_burned
 
 music_value = 10
