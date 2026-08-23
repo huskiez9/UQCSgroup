@@ -20,7 +20,7 @@ from motivation import check_milestones, check_target, draw_if_active as draw_mo
 CAM_WIDTH = 1280
 CAM_HEIGHT = 720
 CALORIES_PER_REP = 0.4
-BIG_MACS_PER_REP = 0.48
+BIG_MACS_PER_REP = 0.048
 WEIGHT_KG = 70
 ACTIVITY_MET_MOD = 3.8
 DOWN_ANGLE = 95.5
@@ -225,9 +225,9 @@ def draw_active_side(frame, landmarks, side):
 
 def calorie_tracker(frame, reps):
     height, width = frame.shape[:2]
-    calories_burned = reps * CALORIES_PER_REP
-    calorie_text = f"Calories: {calories_burned:.2f} kcal"
-    draw_text(frame, calorie_text, (width - 220, 35), YELLOW, 1.2, 2)
+    calories_burned = reps * BIG_MACS_PER_REP
+    calorie_text = f"Calories: {calories_burned:.2f}% of a Big Mac"
+    draw_text(frame, calorie_text, (width - 200, 35), YELLOW, 1.2, 2)
     return calories_burned
 
 music_value = 10
