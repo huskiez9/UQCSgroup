@@ -225,9 +225,19 @@ def draw_active_side(frame, landmarks, side):
 
 def calorie_tracker(frame, reps):
     height, width = frame.shape[:2]
-    calories_burned = reps * BIG_MACS_PER_REP
-    calorie_text = f"Calories: {calories_burned:.2f}% of a Big Mac"
-    draw_text(frame, calorie_text, (width - 300, 35), YELLOW, 1.2, 2)
+    calories_burned = reps * CALORIES_PER_REP
+    perc_of_big_mac = reps * BIG_MACS_PER_REP
+    big_mac_num = 0
+    calorie_text = f"Calories: {calories_burned:.2f}kcal"
+    big_mac_perc = f"% of Big Mac: {perc_of_big_mac:.2f}%"
+    num_big_mac = f"# of Big Macs: {big_mac_num} Big Macs"
+    if perc_of_big_mac == 100:
+        big_mac_num += 1
+
+    draw_text(frame, calorie_text, (width - 220, 30), YELLOW, 1.2, 2)
+    draw_text(frame, big_mac_perc, (width - 270,50 ), YELLOW, 1.2, 2)
+    draw_text(frame, num_big_mac, (width - 280,75 ), YELLOW, 1.2, 2)
+
     return calories_burned
 
 music_value = 10
@@ -379,7 +389,7 @@ def main():
             draw_text(frame, f"POSITION: {stage}", (40, 180), stage_color, 4, 2)
 
             elapsed_str = get_total_time(start_time)
-            draw_text(frame, f"Time: {elapsed_str}", (w - 220, 90), WHITE, 1.2, 2)
+            draw_text(frame, f"Time: {elapsed_str}", (w - 220, 100), WHITE, 1.2, 2)
 
             #DISPLAY VALUES.
             #if results.pose_landmarks and arm_visible(landmarks, side):
@@ -469,10 +479,10 @@ def main():
                 target_reps = 80
             elif key == ord("9"):
                 target_reps = 90
-            elif key == ord("w"):
+            elif key == ord("d"):
                     set_volume_music += 0.1
                     pygame.mixer.music.set_volume(set_volume_music)
-            elif key == ord("s"):
+            elif key == ord("a"):
                     set_volume_music -= 0.1
                     pygame.mixer.music.set_volume(set_volume_music)
         
