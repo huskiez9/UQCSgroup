@@ -479,21 +479,21 @@ def main():
 
             elif key == ord("1"):
                 target_reps = 5
-            elif key == ord("2"):
+            elif key == ord("2") or reps == 5:
                 target_reps = 20
-            elif key == ord("3"):
-                target_reps = 30
-            elif key == ord("4"):
+            elif key == ord("3") or reps == 20:
+                target_reps = 30 
+            elif key == ord("4") or reps == 30:
                 target_reps = 40
-            elif key == ord("5"):
+            elif key == ord("5")or reps == 50:
                 target_reps = 50
-            elif key == ord("6"):
+            elif key == ord("6") or reps == 60:
                 target_reps = 60
-            elif key == ord("7"):
+            elif key == ord("7") or reps == 70:
                 target_reps = 70
-            elif key == ord("8"):
+            elif key == ord("8") or reps == 80:
                 target_reps = 80
-            elif key == ord("9"):
+            elif key == ord("9") or reps == 90:
                 target_reps = 90
             elif key == ord("d"):
                     music_value += 10
