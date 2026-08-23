@@ -240,12 +240,13 @@ def calorie_tracker(frame, reps):
 
     return calories_burned
 
-music_value = 10
+
 def change_music_vol(music_value):
     set_volume_music = music_value/100
     pygame.mixer.music.set_volume(set_volume_music) #Set volume
 
 def main():
+    music_value = 10
     cap = cv2.VideoCapture(0)   
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, CAM_WIDTH) #Defne the width and height of camera frame
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, CAM_HEIGHT) #Define the width and height of camera frame
@@ -260,6 +261,7 @@ def main():
     song_path = os.path.join(script_directory, "workout_song.mp3")
     pygame.mixer.music.load(song_path) #Load Music
     pygame.mixer.music.play(-1) #Make sure song loops infinitely!
+    change_music_vol(music_value)
     #cv2.createTrackbar("Volume", "Side Push-Up Tracker",10, 100, change_music_vol)
 
     #Default values for reps, stage, bottom_reached, down_frames and up_frames
@@ -480,11 +482,11 @@ def main():
             elif key == ord("9"):
                 target_reps = 90
             elif key == ord("d"):
-                    set_volume_music += 0.1
-                    pygame.mixer.music.set_volume(set_volume_music)
+                    music_value += 10
+                    change_music_vol(music_value)
             elif key == ord("a"):
-                    set_volume_music -= 0.1
-                    pygame.mixer.music.set_volume(set_volume_music)
+                    music_value -= 10
+                    change_music_vol(music_value)
         
     finally:
         pygame.mixer.music.stop()
