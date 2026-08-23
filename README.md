@@ -7,7 +7,6 @@ The project ensures good form by only allowing a full extension and flexion moti
 
 Our vision is to make personal exercise tracking more accessible, functional and safer. Our software combines a repetition counter, workout timer and a movement analysis tool into one. The elbow angles allow for incorrect form to not be counted allowing for users to recognise bad technique, reducing the risk of injury.  
 
-
 ## Features
 
 - **Automatic rep counting:** Increases a counter when the user completes a full range of motion exercise
@@ -18,7 +17,6 @@ Our vision is to make personal exercise tracking more accessible, functional and
 - **Workout Controls:** Allows the user to reset, save or quit the session with keyboard controls. 
 - **Session Records:**  Saves completed workout records into a database with a date and time. 
 - **Workout Timer:** Tracks the total workout time the user has been exercising for.
-
 
 ## How it works
 
