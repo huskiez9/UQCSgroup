@@ -13,9 +13,12 @@ MILESTONE_PHRASES = [
     "Stay strong!",
     "You've got this!",
     "You're the best!",
-    "2000 to go!",
+    "you're tung tung tung tung sahooring!",
     "That's the spirit!",
-    "67 to go!"
+    "67 to go!",
+    "Push sweetheart!",
+    "You are a machine!",
+    "Why did the egg cross the road? Because the chicken did!"
 ]
 
 TARGET_PHRASE = "You reached the target, stand proud, you are strong!"
