@@ -15,6 +15,7 @@ from stopwatch import start_timer, get_total_time
 from six_seven import check_and_trigger, draw_if_active
 from Summary import summary_screen
 from motivation import check_milestones, check_target, draw_if_active as draw_motivation, reset as reset_motivation
+from instructions import show_instructions
 
 #Some parameters
 CAM_WIDTH = 1280
@@ -262,6 +263,13 @@ def main():
     pygame.mixer.music.load(song_path) #Load Music
     pygame.mixer.music.play(-1) #Make sure song loops infinitely!
     change_music_vol(music_value)
+
+    if not show_instructions("instructions.png"):
+        cap.release()
+        cv2.destroyAllWindows()
+        return
+
+
     #cv2.createTrackbar("Volume", "Side Push-Up Tracker",10, 100, change_music_vol)
 
     #Default values for reps, stage, bottom_reached, down_frames and up_frames
