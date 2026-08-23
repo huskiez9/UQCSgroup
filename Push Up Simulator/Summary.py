@@ -52,24 +52,15 @@ def summary_screen(frame, reps, final_calories_burned, passed_time_sec):
     
 
     draw_centered_text(summary_frame, "Press 'Q' to Exit", int(height * 0.95), (200, 200, 200), scale=1.5, thickness=2)
+    # draw_centered_text(summary_frame, "Press 'R' to Restart", int(height * 0.90), (200, 200, 200), scale=1.5, thickness=2)
 
     # Display Loop
     while True:
         cv2.imshow("Session Summary", summary_frame)
         summary_key = cv2.waitKey(1) & 0xFF
         if summary_key == ord("q"):
-            break
+            cv2.destroyWindow("Session Summary")
+            return "quit"
         elif summary_key == ord("r"):
-                cv2.destroyWindow("Session Summary")
-                cv2.imshow("Side Push-Up Tracker", frame)
-                reps = 0
-                stage = "UP"
-                bottom_reached = False
-                down_frames = 0
-                up_frames = 0
-  
-                reset_motivation()
-                print("[INFO] Counter reset")
-            
-    # Clean up the window after exiting
-    cv2.destroyWindow("Session Summary")
+            cv2.destroyWindow("Session Summary")
+            return "restart"

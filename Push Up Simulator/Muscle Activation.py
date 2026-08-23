@@ -436,9 +436,20 @@ def main():
                 
             elif key == ord("e"): #E  = end session
                 final_calories_burned = reps * CALORIES_PER_REP
-                cap.release()
-                cv2.destroyWindow("Side Push-Up Tracker")
-                summary_screen(frame, reps, final_calories_burned, passed_time_sec ) #Window crashes, leading to summary screen
+                choice = summary_screen(frame, reps, final_calories_burned, passed_time_sec)
+                if choice == "restart":
+                    reps = 0
+                    stage = "UP"
+                    bottom_reached = False
+                    down_frames = 0
+                    up_frames = 0
+                    elbow_history.clear()
+                    hip_history.clear()
+                    knee_history.clear() 
+                    start_time = start_timer()
+                    reset_motivation()
+                else:
+                    break # quit and exit the main loop same as before
 
             elif key == ord("1"):
                 target_reps = 5
