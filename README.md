@@ -1,4 +1,5 @@
-# A brief summary
+# READ ME PLEASEEE
+# A summary
 
 An interactive computer vision fitness project built by our hackathon team. Our software uses a webcam to automatically count reps, monitor the user's form and movement based on body part angles, and provide live analysis feedback. 
 The project ensures good form by only allowing a full extension and flexion motion with the elbow. The tracker makes workouts easier for users to follow without wearing a physical device or using specialised gym equipment. The user simply needs to positions themselves side-on (perpendicular) towards the camera and can begin exercising while their reps, calories burned and more, is displayed on the screen.  
