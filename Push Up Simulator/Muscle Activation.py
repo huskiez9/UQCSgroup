@@ -20,6 +20,7 @@ from motivation import check_milestones, check_target, draw_if_active as draw_mo
 CAM_WIDTH = 1280
 CAM_HEIGHT = 720
 CALORIES_PER_REP = 0.4
+BIG_MACS_PER_REP = 0.48
 WEIGHT_KG = 70
 ACTIVITY_MET_MOD = 3.8
 DOWN_ANGLE = 95.5
@@ -423,6 +424,7 @@ def main():
                 elbow_history.clear()
                 hip_history.clear()
                 knee_history.clear() 
+                passed_time_sec = start_time
 
                 reset_motivation()
                 print("[INFO] Counter reset")
