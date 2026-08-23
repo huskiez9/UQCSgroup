@@ -14,6 +14,7 @@ Our vision is to make personal exercise tracking more accessible, functional and
 - **Form Analysis**: Checks elbow angle and shoulder to heel alignment 
 - **Live Visual Feedback:** Displays body part angles and movement stages while the exercise is being completed.
 - **Audio Feedback:** Plays a beep after each successful repetition.
+-- **Audio Motivation:** An AI voice gives you motivation after 10 successful reps everytime
 - **Workout Controls:** Allows the user to reset, save or quit the session with keyboard controls. 
 - **Session Records:**  Saves completed workout records into a database with a date and time. 
 - **Workout Timer:** Tracks the total workout time the user has been exercising for.
@@ -69,4 +70,8 @@ Future versions could support additional exercises, workout goals, set and rest 
 
 - VSCode
 
+## Final Words
+
+I hope you, the user, enjoy using this program :D
+Go get cheesing!!
 
