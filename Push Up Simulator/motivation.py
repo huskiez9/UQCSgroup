@@ -91,7 +91,7 @@ def draw_if_active(frame):
 
     (text_w, text_h), _ = cv2.getTextSize(_banner_text, font, scale, thickness)
     x = (width - text_w) // 2
-    y = int(height * 0.25)
+    y = int(height * 0.45)
 
     cv2.putText(frame, _banner_text, (x, y), font, scale, (0, 0, 0), thickness + 3, cv2.LINE_AA)
     cv2.putText(frame, _banner_text, (x, y), font, scale, (0, 255, 120), thickness, cv2.LINE_AA)
