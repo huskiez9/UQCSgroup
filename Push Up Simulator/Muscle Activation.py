@@ -424,7 +424,7 @@ def main():
                 elbow_history.clear()
                 hip_history.clear()
                 knee_history.clear() 
-                passed_time_sec = start_time
+                start_time = start_timer()
 
                 reset_motivation()
                 print("[INFO] Counter reset")
