@@ -270,7 +270,8 @@ def main():
     bottom_reached = False
     down_frames = 0
     up_frames = 0
-    beep_enabled = True  # Have the option to enable/disable the beep sound for user preference
+    beep_enabled = True
+    music_enabled = True
     target_reps = None
 
     if not run_countdown(cap, seconds=5): #Run countdown before starting the pushup tracker
@@ -387,6 +388,9 @@ def main():
             beep_status_colour = GREEN if beep_enabled else RED
             draw_text(frame, f"Beep: {'ON' if beep_enabled else 'OFF'} (B to toggle)", (40, 650), beep_status_colour, 2.5, 1)
 
+            music_status_colour = GREEN if music_enabled else RED
+            draw_text(frame, f"Music: {'ON' if music_enabled else 'OFF'} (M to toggle)", (40, 700), music_status_colour, 2.5, 1)
+
             stage_color = GREEN if stage == "UP" else ORANGE
             draw_text(frame, f"POSITION: {stage}", (40, 180), stage_color, 4, 2)
 
@@ -445,6 +449,16 @@ def main():
                 beep_enabled = not beep_enabled
                 status = "enabled" if beep_enabled else "disabled"
                 print(f"[INFO] Beep sound is: {status}")
+
+            elif key == ord("m"): # M = toggle music on/off
+                music_enabled = not music_enabled
+                if music_enabled:
+                    pygame.mixer.music.unpause()
+                    print("[INFO] Music is: enabled")
+                else:
+                    pygame.mixer.music.pause()
+                    status = "enabled" if music_enabled else "disabled"
+                    print(f"[INFO] Music is: {status}")
                 
             elif key == ord("e"): #E  = end session
                 final_calories_burned = reps * CALORIES_PER_REP

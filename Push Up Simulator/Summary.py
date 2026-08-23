@@ -52,7 +52,7 @@ def summary_screen(frame, reps, final_calories_burned, passed_time_sec):
     
 
     draw_centered_text(summary_frame, "Press 'Q' to Exit", int(height * 0.95), (200, 200, 200), scale=1.5, thickness=2)
-    # draw_centered_text(summary_frame, "Press 'R' to Restart", int(height * 0.90), (200, 200, 200), scale=1.5, thickness=2)
+    draw_centered_text(summary_frame, "Press 'R' to Restart", int(height * 0.90), (200, 200, 200), scale=1.5, thickness=2)
 
     # Display Loop
     while True:
