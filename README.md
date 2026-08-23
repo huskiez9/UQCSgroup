@@ -71,5 +71,6 @@ Future versions could support additional exercises, workout goals, set and rest 
 ## Final Words
 
 I hope you, the user, enjoy using this program :D
-Go get cheesing!!
+Get those gains, reach your milestones, and most importatnly, have fun!!
+Now, go get cheesing!!
 
