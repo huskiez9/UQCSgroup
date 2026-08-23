@@ -1,11 +1,11 @@
-# ______
+# A brief summary
 
-An interactive computer vision fitness project built by our hackathon team. Our software uses a webcam to automatically count reps, monitor the user's movement based on body part angles, and provide live analysis feedback. 
-The project ensures good form by only allowing a full extension and flexion motion with the elbow. The tracker makes workouts easier for users to follow without wearing a physical device or using specialised gym equipment. The user simply positions themselves in front of a camera and begins exercising while their repetitions, calories and movement stage is displayed on the screen.  
+An interactive computer vision fitness project built by our hackathon team. Our software uses a webcam to automatically count reps, monitor the user's form and movement based on body part angles, and provide live analysis feedback. 
+The project ensures good form by only allowing a full extension and flexion motion with the elbow. The tracker makes workouts easier for users to follow without wearing a physical device or using specialised gym equipment. The user simply needs to positions themselves side-on (perpendicular) towards the camera and can begin exercising while their reps, calories burned and more, is displayed on the screen.  
 
-## Vision
+## Our vision
 
-Make personal exercise tracking more accessible, functional and safer. Our software combines a repetition counter, workout timer and a movement analysis tool into one. The elbow angles allow for incorrect form to not be counted allowing for users to recognise bad technique, reducing the risk of injury.  
+Our vision is to make personal exercise tracking more accessible, functional and safer. Our software combines a repetition counter, workout timer and a movement analysis tool into one. The elbow angles allow for incorrect form to not be counted allowing for users to recognise bad technique, reducing the risk of injury.  
 
 
 ## Features
@@ -33,6 +33,14 @@ B — turn the completion beep sound on or off.
 
 Q — closes the application.
 
+E - ends the current session
+
+A - decreases the volume of the background music
+
+D - increases the volume of the background music
+
+C - continue from instruction screen to main workout
+
 ## Hackathon scope
 
 Our first demo will focus on a reliable core interaction:
@@ -46,6 +54,7 @@ Our first demo will focus on a reliable core interaction:
 
 Future versions could support additional exercises, workout goals, set and rest tracking, progress graphs, voice feedback, and personalised form thresholds.
 
+
 ## Technology Used
 
 - Python
@@ -55,5 +64,9 @@ Future versions could support additional exercises, workout goals, set and rest 
 - MediaPipe Pose
 
 - NumPy
+
+- Github
+
+- VSCode
 
 
